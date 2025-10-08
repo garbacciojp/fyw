@@ -1,0 +1,253 @@
+/**
+ * Global Styles
+ * Entry point for all widget styles
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Font Utility Classes */
+@layer utilities {
+  .fyw-font-heading {
+    font-family: 'Bebas Neue', Arial, sans-serif !important;
+  }
+  
+  .fyw-font-body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  }
+}
+
+/* Development mode full height fix */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom Fonts - Scoped to FYW Widget */
+/* Bebas Neue - Headings */
+@font-face {
+  font-family: 'Bebas Neue';
+  src: url('/fonts/bebas-neue/BebasNeue-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Poppins - Body Text */
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* CSS Reset and Isolation for Widget */
+.fyw-widget {
+  /* Complete isolation from host styles */
+  all: initial;
+  
+  /* Re-establish box model */
+  box-sizing: border-box;
+  
+  /* Ensure full height */
+  height: 100vh;
+  width: 100vw;
+  
+  /* Reset for all children */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+  }
+  
+  /* Re-establish essential defaults */
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #ffffff;
+  background-color: #000000;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Design System Variables */
+.fyw-widget {
+  /* Colors */
+  --fyw-black: #000000;
+  --fyw-white: #ffffff;
+  --fyw-gray-50: #f9fafb;
+  --fyw-gray-100: #f3f4f6;
+  --fyw-gray-400: #9ca3af;
+  --fyw-gray-600: #4b5563;
+  --fyw-gray-700: #374151;
+  --fyw-gray-800: #1f2937;
+  --fyw-gray-900: #111827;
+  
+  /* Spacing */
+  --fyw-space-xs: 0.5rem;
+  --fyw-space-sm: 1rem;
+  --fyw-space-md: 1.5rem;
+  --fyw-space-lg: 2rem;
+  --fyw-space-xl: 3rem;
+  
+  /* Typography */
+  --fyw-font-size-xs: 0.75rem;
+  --fyw-font-size-sm: 0.875rem;
+  --fyw-font-size-base: 1rem;
+  --fyw-font-size-lg: 1.125rem;
+  --fyw-font-size-xl: 1.25rem;
+  --fyw-font-size-2xl: 1.5rem;
+  --fyw-font-size-3xl: 2rem;
+  --fyw-font-size-4xl: 2.5rem;
+  
+  /* Transitions */
+  --fyw-transition: all 0.2s ease;
+  --fyw-transition-fast: all 0.15s ease;
+  --fyw-transition-slow: all 0.3s ease;
+  
+  /* Z-index scale */
+  --fyw-z-base: 1;
+  --fyw-z-header: 10;
+  --fyw-z-footer: 10;
+  --fyw-z-modal: 100;
+  --fyw-z-overlay: 999999;
+  
+  /* Border radius */
+  --fyw-radius-sm: 0.25rem;
+  --fyw-radius-md: 0.5rem;
+  --fyw-radius-lg: 0.75rem;
+  --fyw-radius-xl: 1rem;
+  
+  /* Shadows */
+  --fyw-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --fyw-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --fyw-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+/* Animations */
+@keyframes fyw-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fyw-slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fyw-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fyw-orbit {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+    opacity: 1;
+    scale: 1;
+  }
+  50% {
+    opacity: 0.4;
+    scale: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* Utility Classes */
+.fyw-animate-fadeIn {
+  animation: fyw-fadeIn 0.3s ease-out;
+}
+
+.fyw-animate-slideUp {
+  animation: fyw-slideUp 0.3s ease-out;
+}
+
+.fyw-animate-spin {
+  animation: fyw-spin 1s linear infinite;
+}
+
+/* Scrollbar Styling - White & Thin */
+.fyw-widget ::-webkit-scrollbar {
+  width: 3px; /* Thin scrollbar */
+}
+
+.fyw-widget ::-webkit-scrollbar-track {
+  background: transparent; /* No track background */
+}
+
+.fyw-widget ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3); /* White with 30% opacity */
+  border-radius: 0; /* Sharp corners to match design */
+}
+
+.fyw-widget ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5); /* Brighter white on hover */
+}
+
+/* Focus Styles */
+.fyw-widget *:focus-visible {
+  outline: 2px solid var(--fyw-white);
+  outline-offset: 2px;
+}
+
+/* Screen Reader Only */
+.fyw-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
