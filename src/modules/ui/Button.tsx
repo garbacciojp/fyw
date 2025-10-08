@@ -44,12 +44,14 @@ export const Button: React.FC<ButtonProps> = ({
     primary: cn(
       'fyw-bg-fyw-white fyw-text-fyw-black',
       'hover:fyw-bg-fyw-gray-100',
-      'active:fyw-bg-fyw-gray-200'
+      'active:fyw-bg-fyw-gray-200',
+      '!fyw-rounded-none'
     ),
     secondary: cn(
       'fyw-bg-transparent fyw-text-fyw-white',
-      'fyw-border fyw-border-fyw-gray-700',
-      'hover:fyw-border-fyw-gray-600 hover:fyw-bg-fyw-gray-900'
+      'fyw-border-[1px] fyw-border-solid fyw-border-fyw-white',
+      'hover:fyw-border-fyw-gray-100',
+      '!fyw-rounded-none'
     ),
     ghost: cn('fyw-bg-transparent fyw-text-fyw-gray-400', 'hover:fyw-text-fyw-white'),
   };
@@ -57,7 +59,7 @@ export const Button: React.FC<ButtonProps> = ({
   const sizeClasses = {
     sm: 'fyw-px-4 fyw-py-2 fyw-text-sm',
     md: 'fyw-px-6 fyw-py-3 fyw-text-base',
-    lg: 'fyw-px-8 fyw-py-4 fyw-text-lg',
+    lg: 'fyw-px-12 fyw-py-4 fyw-text-lg',
   };
 
   return (

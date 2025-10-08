@@ -49,7 +49,7 @@ export const QuestionHeader: React.FC<QuestionHeaderProps> = ({
           (for{' '}
           <button
             onClick={onSwitchFlow}
-            className="fyw-text-fyw-white fyw-underline hover:fyw-text-fyw-gray-300 fyw-transition-colors fyw-duration-200"
+            className="fyw-text-green-500 fyw-underline hover:fyw-text-green-400 fyw-transition-colors fyw-duration-200"
           >
             {flowType === 'mine' ? 'myself' : 'someone else'}
           </button>
