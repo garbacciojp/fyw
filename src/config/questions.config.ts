@@ -123,9 +123,9 @@ export const QUESTIONS: QuestionConfig[] = [
       flow === FLOW_TYPES.MINE ? 'Tell us about yourself:' : 'Tell us about them:',
     getSubtitle: (flow: FlowType) =>
       flow === FLOW_TYPES.MINE
-        ? 'What are your interests? (Select all that apply)'
-        : 'What are their interests? (Select all that apply if you know)',
-    maxSelections: 5,
+        ? 'What are your interests? (Select up to 3)'
+        : 'What are their interests? (Select up to 3 if you know)',
+    maxSelections: 3,
     allowCustom: true,
     options: [
       { value: 'Art & Creativity', label: 'Art & Creativity' },
@@ -173,15 +173,13 @@ export const QUESTIONS: QuestionConfig[] = [
   {
     id: 'wordMeaning',
     flowType: 'both',
-    type: QUESTION_TYPES.MULTI_SELECT_WITH_CUSTOM as 'multi-select-with-custom',
+    type: QUESTION_TYPES.RADIO as 'radio',
     formDataKey: 'wordMeaning',
     required: true,
     getQuestionNumber: (flow: FlowType) => (flow === FLOW_TYPES.MINE ? 5 : 7),
     getTotalQuestions: (flow: FlowType) => (flow === FLOW_TYPES.THEIRS ? 10 : 8),
     getTitle: () => 'What kind of meaning do you want the word to have?',
-    getSubtitle: () => 'Select all that apply',
-    maxSelections: 5,
-    allowCustom: false,
+    getSubtitle: () => 'Choose one that best matches what you want',
     options: [
       { value: 'Personal trait', label: 'Personal trait' },
       { value: 'A value or ideal', label: 'A value or ideal' },
@@ -197,15 +195,13 @@ export const QUESTIONS: QuestionConfig[] = [
   {
     id: 'languages',
     flowType: 'both',
-    type: QUESTION_TYPES.MULTI_SELECT_WITH_CUSTOM as 'multi-select-with-custom',
+    type: QUESTION_TYPES.RADIO as 'radio',
     formDataKey: 'languages',
     required: true,
     getQuestionNumber: (flow: FlowType) => (flow === FLOW_TYPES.MINE ? 6 : 8),
     getTotalQuestions: (flow: FlowType) => (flow === FLOW_TYPES.THEIRS ? 10 : 8),
     getTitle: () => 'Would you like the word to be in:',
-    getSubtitle: () => 'Select all that apply',
-    maxSelections: 5,
-    allowCustom: false,
+    getSubtitle: () => 'Choose one language',
     options: [
       { value: 'English', label: 'English' },
       { value: 'Arabic', label: 'Arabic' },
@@ -245,7 +241,7 @@ export const QUESTIONS: QuestionConfig[] = [
   {
     id: 'emotionalImpact',
     flowType: 'both',
-    type: QUESTION_TYPES.MULTI_SELECT_WITH_CUSTOM as 'multi-select-with-custom',
+    type: QUESTION_TYPES.TEXT_WITH_OPTIONS as 'text-with-options',
     formDataKey: 'emotionalImpact',
     required: true,
     getQuestionNumber: (flow: FlowType) => (flow === FLOW_TYPES.MINE ? 8 : 10),
@@ -254,9 +250,7 @@ export const QUESTIONS: QuestionConfig[] = [
       flow === FLOW_TYPES.MINE
         ? 'How do you want the word to make you feel when you wear it?'
         : 'How do you want the word to make them feel when they wear it?',
-    getSubtitle: () => 'Select all that apply',
-    maxSelections: 5,
-    allowCustom: true,
+    getSubtitle: () => 'Choose one feeling',
     options: [
       { value: 'Empowering', label: 'Empowering' },
       { value: 'Comforting', label: 'Comforting' },
@@ -264,7 +258,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'Romantic', label: 'Romantic' },
       { value: 'Playful', label: 'Playful' },
       { value: 'Mysterious', label: 'Mysterious' },
-      { value: 'Other', label: 'Other' },
+      { value: 'other', label: 'Other' },
     ],
   },
 ];

@@ -13,7 +13,6 @@ import type { AppScreen, FlowType, PartialUserFormData, JewelryNameSuggestion, U
 import { useQuestionFlow, useFormData, storage } from '@/core';
 import { openaiService } from '@/core/services';
 import { AppShell, AppHeader, AppContent } from './layout';
-import { VideoBackground } from './layout/VideoBackground';
 import { WelcomeScreen, QuestionScreen, LoadingScreen, ResultsScreen } from './screens';
 import { DebugPanel } from './debug';
 import { APP_SCREENS } from '@/config';
@@ -34,8 +33,8 @@ export const App: React.FC = () => {
     onSave: (data: PartialUserFormData) => storage.saveFormData(data),
   });
 
-  // Initialize question flow
-  const questionFlow = useQuestionFlow(flowType);
+  // Initialize question flow with formData for smart navigation on flow changes
+  const questionFlow = useQuestionFlow({ flowType, formData });
 
   // Handle flow selection from welcome screen
   const handleSelectFlow = useCallback(
@@ -76,8 +75,18 @@ export const App: React.FC = () => {
     }
   }, [questionFlow, isComplete, formData]);
 
-  // Handle reset
+  // Handle reset - stay on current track, go to question 1
   const handleReset = useCallback(() => {
+    resetForm();
+    storage.clearFormData();
+    questionFlow.goToQuestion(0); // Go back to first question of current track
+    setSuggestions(null);
+    setError(null);
+    // Keep screen on QUESTIONS and keep current flowType
+  }, [resetForm, questionFlow]);
+
+  // Handle start over (from results) - return to welcome screen
+  const handleStartOver = useCallback(() => {
     resetForm();
     storage.clearFormData();
     setScreen(APP_SCREENS.WELCOME as AppScreen);
@@ -86,15 +95,15 @@ export const App: React.FC = () => {
     setError(null);
   }, [resetForm]);
 
-  // Handle start over (from results)
-  const handleStartOver = useCallback(() => {
-    handleReset();
-  }, [handleReset]);
-
   // Handle close - return to welcome screen
   const handleClose = useCallback(() => {
-    handleReset();
-  }, [handleReset]);
+    resetForm();
+    storage.clearFormData();
+    setScreen(APP_SCREENS.WELCOME as AppScreen);
+    setFlowType('mine');
+    setSuggestions(null);
+    setError(null);
+  }, [resetForm]);
 
   // Render current screen
   const renderScreen = () => {
@@ -164,18 +173,28 @@ export const App: React.FC = () => {
         />
       }
     >
-      {/* Close button for non-welcome screens */}
-      {screen !== APP_SCREENS.WELCOME && <AppHeader onClose={handleClose} />}
-
-      {/* Render screen with appropriate wrapper */}
       {screen === APP_SCREENS.WELCOME ? (
         // WelcomeScreen handles its own full-height layout
         renderScreen()
       ) : (
-        // Other screens use AppContent for proper scrolling
-        <AppContent>
-          {renderScreen()}
-        </AppContent>
+        // All other screens need flex container to work with AppHeader
+        <div className="fyw-flex fyw-flex-col fyw-w-full fyw-overflow-hidden" style={{ height: '100%', maxHeight: '100%' }}>
+          {/* Close button for non-welcome screens */}
+          <AppHeader onClose={handleClose} />
+          
+          {/* Content area - scrollable with strict height constraint */}
+          <div className="fyw-flex-1 fyw-overflow-y-auto fyw-overflow-x-hidden fyw-overscroll-none" style={{ overflowAnchor: 'none', maxHeight: '100%', WebkitOverflowScrolling: 'touch' }}>
+            {screen === APP_SCREENS.QUESTIONS ? (
+              // QuestionScreen handles its own layout
+              renderScreen()
+            ) : (
+              // Other screens (Loading, Results) use AppContent for proper scrolling
+              <AppContent>
+                {renderScreen()}
+              </AppContent>
+            )}
+          </div>
+        </div>
       )}
 
       {/* Error toast */}

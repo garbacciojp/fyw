@@ -59,7 +59,21 @@ export const Button: React.FC<ButtonProps> = ({
   const sizeClasses = {
     sm: 'fyw-px-4 fyw-py-2 fyw-text-sm',
     md: 'fyw-px-6 fyw-py-3 fyw-text-base',
-    lg: 'fyw-px-12 fyw-py-4 fyw-text-lg',
+    lg: 'fyw-px-12 fyw-py-4 fyw-text-base',
+  };
+
+  // Check if children is "Continue →" and split it
+  const renderButtonContent = () => {
+    if (typeof children === 'string' && children === 'Continue →') {
+      return (
+        <div className="fyw-flex fyw-items-center fyw-justify-center fyw-gap-2">
+          <div>Continue</div>
+          <div>→</div>
+        </div>
+      );
+    }
+    
+    return children;
   };
 
   return (
@@ -69,7 +83,7 @@ export const Button: React.FC<ButtonProps> = ({
       {...props}
     >
       {isLoading && <LoadingSpinner size="sm" />}
-      {children}
+      {renderButtonContent()}
     </button>
   );
 };

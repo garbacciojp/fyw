@@ -32,7 +32,7 @@ export const DebugPanel: React.FC<DebugPanelProps> = ({
   // Build clean API payload (remove undefined/empty values)
   const buildApiPayload = (): Partial<UserDataPayload> => {
     return JSON.parse(
-      JSON.stringify(formData, (key, value) => {
+      JSON.stringify(formData, (_key, value) => {
         if (
           value === null ||
           value === undefined ||

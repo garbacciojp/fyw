@@ -22,7 +22,8 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSelectFlow, clas
   return (
     <div
       className={cn(
-        'fyw-w-full fyw-px-8',
+        'fyw-w-full fyw-h-full fyw-px-8',
+        'fyw-flex fyw-flex-col fyw-justify-center fyw-items-center',
         'fyw-text-white',
         className
       )}

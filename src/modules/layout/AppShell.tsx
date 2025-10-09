@@ -12,7 +12,6 @@ import { cn } from '@/core';
 interface AppShellProps {
   children: ReactNode;
   showVideo?: boolean;
-  videoContent?: ReactNode;
   debugPanel?: ReactNode;
   className?: string;
 }
@@ -24,7 +23,6 @@ interface AppShellProps {
 export const AppShell: React.FC<AppShellProps> = ({
   children,
   showVideo = true,
-  videoContent,
   debugPanel,
   className,
 }) => {
@@ -36,8 +34,9 @@ export const AppShell: React.FC<AppShellProps> = ({
         'fyw-overflow-hidden fyw-bg-fyw-black',
         className
       )}
+      style={{ maxHeight: '100vh', height: '100vh' }}
     >
-      <div className="fyw-flex fyw-h-full fyw-w-full">
+      <div className="fyw-flex fyw-h-full fyw-w-full fyw-overflow-hidden">
         {/* Image Column - Desktop only (hidden on mobile) - LEFT SIDE */}
         {showVideo && (
           <div className="fyw-hidden md:fyw-block md:fyw-w-1/2 fyw-h-full fyw-relative fyw-bg-gray-800">
@@ -69,7 +68,6 @@ export const AppShell: React.FC<AppShellProps> = ({
         <div
           className={cn(
             'fyw-w-full fyw-h-full',
-            'fyw-flex fyw-flex-col fyw-justify-center fyw-items-center',
             'fyw-bg-fyw-black fyw-text-fyw-white',
             // Desktop: if showing video, take only 1/2 width
             showVideo && 'md:fyw-w-1/2'

@@ -29,12 +29,23 @@ export const RadioButton: React.FC<RadioButtonProps> = ({
   return (
     <label
       className={cn(
-        'fyw-flex fyw-items-center fyw-p-4 fyw-rounded-lg',
-        'fyw-border-2 fyw-cursor-pointer',
-        'fyw-transition-all fyw-duration-200',
+        // Layout & Sizing - matching Input component
+        'fyw-w-full fyw-px-4 fyw-py-4',
+        // Background & Border - conditional styling based on checked state
+        'fyw-border fyw-border-solid fyw-rounded-none',
+        // Conditional styling: white background + black text when checked, dark background + white text when unchecked
         checked
-          ? 'fyw-bg-fyw-gray-900 fyw-border-fyw-white'
-          : 'fyw-bg-transparent fyw-border-fyw-gray-700 hover:fyw-border-fyw-gray-600',
+          ? 'fyw-bg-fyw-white fyw-text-fyw-black fyw-font-semibold fyw-border-fyw-white'
+          : 'fyw-bg-[#1a1a1a] fyw-text-fyw-white fyw-border-fyw-white',
+        // Typography - centered text
+        'fyw-text-base fyw-text-center',
+        // Interaction states
+        'fyw-cursor-pointer fyw-transition-all fyw-duration-200',
+        // Focus/hover state - conditional based on checked state
+        checked
+          ? 'hover:fyw-bg-fyw-gray-100 focus-within:fyw-bg-fyw-gray-100'
+          : 'hover:fyw-bg-[#1f1f1f] focus-within:fyw-bg-[#1f1f1f]',
+        // Disabled state
         disabled && 'fyw-opacity-50 fyw-cursor-not-allowed'
       )}
     >
@@ -48,25 +59,8 @@ export const RadioButton: React.FC<RadioButtonProps> = ({
         className="fyw-sr-only"
       />
 
-      {/* Custom radio indicator */}
-      <div
-        className={cn(
-          'fyw-flex-shrink-0 fyw-w-5 fyw-h-5 fyw-rounded-full',
-          'fyw-border-2 fyw-mr-3',
-          'fyw-flex fyw-items-center fyw-justify-center',
-          checked ? 'fyw-border-fyw-white' : 'fyw-border-fyw-gray-600'
-        )}
-      >
-        {checked && <div className="fyw-w-2.5 fyw-h-2.5 fyw-rounded-full fyw-bg-fyw-white" />}
-      </div>
-
-      {/* Label text */}
-      <span
-        className={cn(
-          'fyw-text-base',
-          checked ? 'fyw-text-fyw-white fyw-font-medium' : 'fyw-text-fyw-gray-300'
-        )}
-      >
+      {/* Label text - centered like Input */}
+      <span className="fyw-text-base fyw-text-center">
         {label}
       </span>
     </label>

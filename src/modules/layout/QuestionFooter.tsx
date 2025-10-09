@@ -33,9 +33,8 @@ export const QuestionFooter: React.FC<QuestionFooterProps> = ({
     <footer
       className={cn(
         'fyw-flex-shrink-0',
-        'fyw-sticky fyw-bottom-0',
         'fyw-px-6 md:fyw-px-8',
-        'fyw-py-6 md:fyw-py-8',
+        'fyw-pt-2 fyw-pb-4',
         'fyw-bg-fyw-black',
         className
       )}

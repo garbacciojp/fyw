@@ -62,23 +62,25 @@ export const TextOptionsQuestion: React.FC<TextOptionsQuestionProps> = ({
   };
 
   return (
-    <div className="fyw-space-y-3">
-      {/* Radio options */}
-      {options.map((option) => {
-        const isChecked = option.value === 'other' 
-          ? showCustomInput 
-          : selectedValue === option.value;
-        
-        return (
-          <RadioButton
-            key={option.value}
-            value={option.value}
-            label={option.label}
-            checked={Boolean(isChecked)}
-            onChange={handleOptionChange}
-          />
-        );
-      })}
+    <div className="fyw-space-y-4">
+      {/* Radio options in a grid layout */}
+      <div className="fyw-grid fyw-grid-cols-1 md:fyw-grid-cols-2 fyw-gap-4">
+        {options.map((option) => {
+          const isChecked = option.value === 'other' 
+            ? showCustomInput 
+            : selectedValue === option.value;
+          
+          return (
+            <RadioButton
+              key={option.value}
+              value={option.value}
+              label={option.label}
+              checked={Boolean(isChecked)}
+              onChange={handleOptionChange}
+            />
+          );
+        })}
+      </div>
 
       {/* Custom text input */}
       {showCustomInput && (

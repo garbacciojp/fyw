@@ -32,38 +32,67 @@ export const MultiSelectQuestion: React.FC<MultiSelectQuestionProps> = ({
   const selectedValues = (value as string[]) || [];
   const [customItem, setCustomItem] = useState('');
 
+  // Get custom values (values not in options list)
+  const customValues = selectedValues.filter(v => !options.find(o => o.value === v));
+  
   // Check if custom input should be shown
   const showCustomInput = allowCustom && 
-    (selectedValues.includes('Other') || 
-     selectedValues.some(v => !options.find(o => o.value === v)));
+    (selectedValues.includes('Other') || customValues.length > 0);
+
+  // Calculate actual selection count (excluding "Other" trigger)
+  // "Other" is just a UI trigger, custom typed values count toward the limit
+  const getActualCount = () => {
+    return selectedValues.filter(v => v !== 'Other').length;
+  };
 
   // Toggle selection
   const toggleItem = (itemValue: string) => {
     if (selectedValues.includes(itemValue)) {
-      // Deselect
-      onChange(selectedValues.filter((v) => v !== itemValue));
-    } else if (selectedValues.length < maxSelections) {
-      // Select (if under limit)
-      onChange([...selectedValues, itemValue]);
+      // Deselect - if deselecting "Other", also remove any custom values
+      if (itemValue === 'Other') {
+        onChange(selectedValues.filter((v) => v !== 'Other' && options.find(o => o.value === v)));
+      } else {
+        onChange(selectedValues.filter((v) => v !== itemValue));
+      }
+    } else {
+      // For "Other", just add it as a trigger (doesn't count toward limit)
+      if (itemValue === 'Other') {
+        onChange([...selectedValues, itemValue]);
+      } else if (getActualCount() < maxSelections) {
+        // For regular items, check actual count
+        onChange([...selectedValues, itemValue]);
+      }
     }
   };
 
   // Add custom item
   const addCustomItem = () => {
     const trimmed = customItem.trim();
-    if (trimmed && selectedValues.length < maxSelections) {
+    if (trimmed && getActualCount() < maxSelections) {
       onChange([...selectedValues, trimmed]);
       setCustomItem('');
     }
   };
 
+  // Remove custom item
+  const removeCustomItem = (itemValue: string) => {
+    onChange(selectedValues.filter((v) => v !== itemValue));
+  };
+
+  const actualCount = getActualCount();
+  
+  // Get only custom typed values (exclude "Other" and predefined options)
+  const displayCustomValues = customValues.filter(v => v !== 'Other');
+
   return (
-    <div className="fyw-space-y-4">
+    <>
       {/* Checkbox grid */}
-      <div className="fyw-grid fyw-grid-cols-1 md:fyw-grid-cols-2 fyw-gap-3">
+      <div className="fyw-grid fyw-grid-cols-1 md:fyw-grid-cols-2 fyw-gap-2 fyw-mb-2">
         {options.map((option) => {
           const isSelected = selectedValues.includes(option.value);
-          const isDisabled = !isSelected && selectedValues.length >= maxSelections;
+          const isDisabled = option.value === 'Other' 
+            ? false 
+            : !isSelected && actualCount >= maxSelections;
 
           return (
             <Checkbox
@@ -78,32 +107,56 @@ export const MultiSelectQuestion: React.FC<MultiSelectQuestionProps> = ({
         })}
       </div>
 
-      {/* Custom input */}
+      {/* Custom input - completely flat */}
       {showCustomInput && (
-        <div className="fyw-flex fyw-gap-2 fyw-animate-fadeIn">
-          <Input
-            value={customItem}
-            onChange={(e) => setCustomItem(e.target.value)}
-            placeholder="Type your own..."
-            onKeyPress={(e) => e.key === 'Enter' && addCustomItem()}
-            disabled={selectedValues.length >= maxSelections}
-          />
+        <div className="fyw-flex fyw-gap-2 fyw-mb-2 fyw-items-stretch">
+          <div className="fyw-flex-1 fyw-min-w-0">
+            <Input
+              value={customItem}
+              onChange={(e) => setCustomItem(e.target.value)}
+              placeholder="Type your own..."
+              onKeyPress={(e) => e.key === 'Enter' && addCustomItem()}
+              disabled={actualCount >= maxSelections}
+            />
+          </div>
           <Button
             onClick={addCustomItem}
-            disabled={!customItem.trim() || selectedValues.length >= maxSelections}
+            disabled={!customItem.trim() || actualCount >= maxSelections}
+            className="fyw-flex-shrink-0 fyw-px-6"
           >
             Add
           </Button>
         </div>
       )}
 
+      {/* Display custom values inline */}
+      {displayCustomValues.length > 0 && (
+        <div className="fyw-flex fyw-flex-wrap fyw-gap-2 fyw-mb-2">
+          {displayCustomValues.map((customValue) => (
+            <div
+              key={customValue}
+              className="fyw-inline-flex fyw-items-center fyw-gap-2 fyw-px-3 fyw-py-1 fyw-bg-[#1a1a1a] fyw-border fyw-border-solid fyw-border-fyw-white fyw-text-fyw-white fyw-text-sm"
+            >
+              <span>{customValue}</span>
+              <button
+                onClick={() => removeCustomItem(customValue)}
+                className="fyw-text-fyw-gray-400 hover:fyw-text-fyw-white fyw-text-lg fyw-leading-none"
+                aria-label={`Remove ${customValue}`}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Selection count */}
       <p className="fyw-text-sm fyw-text-fyw-gray-500">
-        {selectedValues.length} of {maxSelections} selected
+        {actualCount} of {maxSelections} selected
       </p>
       
       {error && <p className="fyw-text-sm fyw-text-red-500">{error}</p>}
-    </div>
+    </>
   );
 };
 

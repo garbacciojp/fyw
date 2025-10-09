@@ -36,15 +36,18 @@ export const RadioQuestion: React.FC<RadioQuestionProps> = ({
 
   return (
     <div className="fyw-space-y-3">
-      {options.map((option) => (
-        <RadioButton
-          key={option.value}
-          value={option.value}
-          label={option.label}
-          checked={selectedValue === option.value}
-          onChange={handleChange}
-        />
-      ))}
+      {/* Radio buttons in a neat grid layout */}
+      <div className="fyw-grid fyw-grid-cols-1 md:fyw-grid-cols-2 fyw-gap-4">
+        {options.map((option) => (
+          <RadioButton
+            key={option.value}
+            value={option.value}
+            label={option.label}
+            checked={selectedValue === option.value}
+            onChange={handleChange}
+          />
+        ))}
+      </div>
       
       {error && <p className="fyw-text-sm fyw-text-red-500 fyw-mt-2">{error}</p>}
     </div>

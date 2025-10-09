@@ -55,7 +55,7 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
   const { onBack, onContinue, onReset, onSwitchFlow, canContinue } = navigation;
   
   return (
-    <div className="fyw-flex fyw-flex-col fyw-h-full">
+    <>
       {/* Header - using reusable component */}
       <QuestionHeader
         flowType={flowType}
@@ -65,11 +65,11 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
         onSwitchFlow={onSwitchFlow}
       />
 
-      {/* Content section (scrollable) */}
-      <div className="fyw-flex-1 fyw-overflow-y-auto fyw-px-6 md:fyw-px-8 fyw-py-8 md:fyw-py-12">
+      {/* Content section - constrained height, prevent scroll anchoring */}
+      <div className="fyw-px-6 md:fyw-px-8 fyw-pt-6 md:fyw-pt-8 fyw-pb-2 fyw-flex-shrink-0" style={{ overflowAnchor: 'none' }}>
         <div className="fyw-w-full fyw-max-w-md fyw-mx-auto fyw-text-center">
           {/* Question title */}
-          <div className="fyw-mb-8">
+          <div className="fyw-mb-6">
             <h2 className="fyw-font-heading fyw-text-6xl md:fyw-text-7xl fyw-font-normal fyw-uppercase fyw-text-fyw-white fyw-mb-4 fyw-leading-none">
               {config.getTitle(flowType)}
             </h2>
@@ -92,7 +92,7 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
         onReset={onReset}
         canContinue={canContinue}
       />
-    </div>
+    </>
   );
 };
 

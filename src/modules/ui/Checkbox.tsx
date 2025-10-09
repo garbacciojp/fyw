@@ -26,59 +26,50 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   disabled = false,
   className,
 }) => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!disabled) {
+      onChange(!checked);
+    }
+  };
+
   return (
     <label
+      onClick={handleClick}
       className={cn(
-        'fyw-flex fyw-items-center fyw-p-4 fyw-rounded-lg',
-        'fyw-border-2 fyw-cursor-pointer',
-        'fyw-transition-all fyw-duration-200',
+        // Layout & Sizing - matching Input and RadioButton components
+        'fyw-w-full fyw-px-4 fyw-py-4',
+        // Background & Border - matching Input component with square corners
+        'fyw-border fyw-border-solid fyw-rounded-none',
+        // Conditional styling: white background + black text when checked, dark background + white text when unchecked
         checked
-          ? 'fyw-bg-fyw-gray-900 fyw-border-fyw-white'
-          : 'fyw-bg-transparent fyw-border-fyw-gray-700 hover:fyw-border-fyw-gray-600',
+          ? 'fyw-bg-fyw-white fyw-text-fyw-black fyw-font-semibold fyw-border-fyw-white'
+          : 'fyw-bg-[#1a1a1a] fyw-text-fyw-white fyw-border-fyw-white',
+        // Typography - centered text
+        'fyw-text-base fyw-text-center',
+        // Interaction states
+        'fyw-cursor-pointer fyw-transition-all fyw-duration-200',
+        // Focus/hover state - conditional based on checked state
+        checked
+          ? 'hover:fyw-bg-fyw-gray-100'
+          : 'hover:fyw-bg-[#1f1f1f]',
+        // Disabled state
         disabled && 'fyw-opacity-50 fyw-cursor-not-allowed',
         className
       )}
     >
-      {/* Hidden native checkbox */}
+      {/* Hidden native checkbox - no interaction */}
       <input
         type="checkbox"
         checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
+        onChange={() => {}} // Controlled by label click
         disabled={disabled}
-        className="fyw-sr-only"
+        tabIndex={-1}
+        className="fyw-sr-only fyw-pointer-events-none"
       />
 
-      {/* Custom checkbox indicator */}
-      <div
-        className={cn(
-          'fyw-flex-shrink-0 fyw-w-5 fyw-h-5 fyw-rounded-md',
-          'fyw-border-2 fyw-mr-3',
-          'fyw-flex fyw-items-center fyw-justify-center',
-          checked ? 'fyw-border-fyw-white fyw-bg-fyw-white' : 'fyw-border-fyw-gray-600'
-        )}
-      >
-        {checked && (
-          <svg
-            className="fyw-w-3 fyw-h-3 fyw-text-fyw-black"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path d="M5 13l4 4L19 7" />
-          </svg>
-        )}
-      </div>
-
-      {/* Label text */}
-      <span
-        className={cn(
-          'fyw-text-base',
-          checked ? 'fyw-text-fyw-white fyw-font-medium' : 'fyw-text-fyw-gray-300'
-        )}
-      >
+      {/* Label text - centered like Input and RadioButton */}
+      <span className="fyw-text-base fyw-text-center">
         {label}
       </span>
     </label>

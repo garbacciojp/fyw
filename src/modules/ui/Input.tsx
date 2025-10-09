@@ -27,10 +27,10 @@ export const Input: React.FC<InputProps> = ({
   ...props
 }) => {
   return (
-    <div className="fyw-w-full">
+    <div className="fyw-w-full fyw-flex-shrink-0">
       {/* Label */}
       {label && (
-        <label className="fyw-block fyw-text-sm fyw-font-medium fyw-text-fyw-white fyw-mb-8">
+        <label className="fyw-block fyw-text-base fyw-font-medium fyw-text-fyw-white fyw-mb-8">
           {label}
           {required && <span className="fyw-text-red-500 fyw-ml-1">*</span>}
         </label>
