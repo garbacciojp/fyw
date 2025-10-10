@@ -81,7 +81,7 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
           </div>
 
           {/* Question component */}
-          <QuestionRouter config={config} value={value} onChange={onChange} />
+          <QuestionRouter config={config} value={value} onChange={onChange} flowType={flowType} />
         </div>
       </div>
 

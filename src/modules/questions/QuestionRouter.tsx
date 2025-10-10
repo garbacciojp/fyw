@@ -6,7 +6,7 @@
  * Props: 5 (under the 7-prop limit)
  */
 
-import type { QuestionConfig } from '@/types';
+import type { QuestionConfig, FlowType } from '@/types';
 import { getQuestionComponent } from './QuestionRegistry';
 
 interface QuestionRouterProps {
@@ -15,6 +15,7 @@ interface QuestionRouterProps {
   onChange: (value: unknown) => void;
   onComplete?: () => void;
   error?: string;
+  flowType?: FlowType;
 }
 
 /**
@@ -26,6 +27,7 @@ export const QuestionRouter: React.FC<QuestionRouterProps> = ({
   onChange,
   onComplete,
   error,
+  flowType,
 }) => {
   // Get the component for this question type
   const QuestionComponent = getQuestionComponent(config.type);
@@ -37,6 +39,7 @@ export const QuestionRouter: React.FC<QuestionRouterProps> = ({
       onChange={onChange}
       onComplete={onComplete}
       error={error}
+      flowType={flowType}
       {...config} // Pass all config as props
     />
   );

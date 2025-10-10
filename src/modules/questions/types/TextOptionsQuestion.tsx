@@ -32,12 +32,14 @@ export const TextOptionsQuestion: React.FC<TextOptionsQuestionProps> = ({
   const [otherSelected, setOtherSelected] = useState(false);
   
   // Determine if custom text is shown
-  const showCustomInput = otherSelected || 
-    (selectedValue && !options.find(o => o.value === selectedValue));
+  const showCustomInput = otherSelected;
 
-  // Initialize custom text if value doesn't match options
+  // Initialize custom text if value doesn't match options (only for actual custom values, not empty)
   useEffect(() => {
-    if (selectedValue && !options.find(o => o.value === selectedValue)) {
+    if (!selectedValue || typeof selectedValue !== 'string') return;
+    
+    const trimmedValue = selectedValue.trim();
+    if (trimmedValue && trimmedValue !== 'other' && !options.find(o => o.value === selectedValue)) {
       setCustomText(selectedValue);
       setOtherSelected(true);
     }
@@ -94,7 +96,8 @@ export const TextOptionsQuestion: React.FC<TextOptionsQuestionProps> = ({
               value={customText}
               onChange={handleCustomTextChange}
               placeholder={placeholder}
-              autoFocus
+              autoFocus={false}
+              tabIndex={0}
             />
           </div>
         </div>

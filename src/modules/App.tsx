@@ -15,7 +15,7 @@ import { openaiService } from '@/core/services';
 import { AppShell, AppHeader, AppContent } from './layout';
 import { WelcomeScreen, QuestionScreen, LoadingScreen, ResultsScreen } from './screens';
 import { DebugPanel } from './debug';
-import { APP_SCREENS, getQuestionImage, DEFAULT_IMAGE } from '@/config';
+import { APP_SCREENS, getQuestionImage, DEFAULT_IMAGE, UI_CONFIG } from '@/config';
 
 /**
  * Main application component
@@ -179,6 +179,21 @@ export const App: React.FC = () => {
         <div className="fyw-flex fyw-flex-col fyw-w-full fyw-overflow-hidden" style={{ height: '100%', maxHeight: '100%' }}>
           {/* Content area - scrollable with strict height constraint */}
           <div className="fyw-flex-1 fyw-overflow-y-auto fyw-overflow-x-hidden fyw-overscroll-none" style={{ overflowAnchor: 'none', maxHeight: '100%', WebkitOverflowScrolling: 'touch' }}>
+            {/* Mobile Image Preview - Scrollable at top (hidden on desktop) */}
+            <div 
+              className="md:fyw-hidden fyw-w-full fyw-relative fyw-bg-gray-800 fyw-flex-shrink-0"
+              style={{
+                height: UI_CONFIG.MOBILE_IMAGE_PREVIEW_HEIGHT
+              }}
+            >
+              <img 
+                src={getCurrentImage()}
+                alt="Custom jewelry product showcase"
+                className="fyw-w-full fyw-h-full fyw-object-cover"
+                style={{ objectPosition: 'center 75%' }}
+              />
+            </div>
+            
             {/* Close button inside scrollable area */}
             <AppHeader onClose={handleClose} />
             

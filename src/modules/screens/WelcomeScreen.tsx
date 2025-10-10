@@ -9,6 +9,7 @@
 import { Button } from '@/modules/ui';
 import type { FlowType } from '@/types';
 import { cn } from '@/core';
+import { DEFAULT_IMAGE, UI_CONFIG } from '@/config';
 
 interface WelcomeScreenProps {
   onSelectFlow: (flow: FlowType) => void;
@@ -16,20 +17,37 @@ interface WelcomeScreenProps {
 }
 
 /**
- * Welcome screen with split-screen design (45% image, 55% text)
+ * Welcome screen with split-screen design (desktop) and mobile image preview
  */
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSelectFlow, className }) => {
   return (
-    <div
-      className={cn(
-        'fyw-w-full fyw-h-full fyw-px-8',
-        'fyw-flex fyw-flex-col fyw-justify-center fyw-items-center',
-        'fyw-text-white',
-        className
-      )}
-    >
+    <div className="fyw-w-full fyw-h-full fyw-overflow-y-auto fyw-overflow-x-hidden">
+      {/* Mobile Image Preview - Scrollable at top (hidden on desktop) */}
+      <div 
+        className="md:fyw-hidden fyw-w-full fyw-relative fyw-bg-gray-800 fyw-flex-shrink-0"
+        style={{
+          height: UI_CONFIG.MOBILE_IMAGE_PREVIEW_HEIGHT
+        }}
+      >
+        <img 
+          src={DEFAULT_IMAGE}
+          alt="Custom jewelry product showcase"
+          className="fyw-w-full fyw-h-full fyw-object-cover"
+          style={{ objectPosition: 'center 75%' }}
+        />
+      </div>
+
       {/* Content Container */}
-      <div className="fyw-max-w-sm fyw-mx-auto fyw-text-center fyw-space-y-6">
+      <div
+        className={cn(
+          'fyw-w-full fyw-px-8 fyw-py-12',
+          'fyw-flex fyw-flex-col fyw-justify-center fyw-items-center',
+          'fyw-text-white',
+          'fyw-min-h-[calc(100vh-360px)] md:fyw-min-h-screen',
+          className
+        )}
+      >
+        <div className="fyw-max-w-sm fyw-mx-auto fyw-text-center fyw-space-y-6">
         {/* Small Heading */}
         <p className="fyw-text-lg fyw-uppercase fyw-tracking-wide fyw-text-white fyw-font-medium">
           FIND YOUR WORD
@@ -58,6 +76,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSelectFlow, clas
             THEIR WORD
           </Button>
         </div>
+      </div>
       </div>
     </div>
   );

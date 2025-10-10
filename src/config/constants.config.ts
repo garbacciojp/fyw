@@ -59,6 +59,7 @@ export const UI_CONFIG = {
   MAX_MULTI_SELECT: 5,
   DEBOUNCE_MS: 500,
   ANIMATION_DURATION_MS: 300,
+  MOBILE_IMAGE_PREVIEW_HEIGHT: '360px', // Height of image preview window on mobile devices
 } as const;
 
 /**

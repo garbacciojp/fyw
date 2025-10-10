@@ -15,6 +15,8 @@ import { TextOptionsQuestion } from './types/TextOptionsQuestion';
 import { MultiSelectQuestion } from './types/MultiSelectQuestion';
 import { TextInputQuestion } from './types/TextInputQuestion';
 
+import type { FlowType } from '@/types';
+
 /**
  * Question component props interface
  * All question components must accept these props
@@ -24,6 +26,7 @@ export interface QuestionComponentProps {
   onChange: (value: unknown) => void;
   onComplete?: () => void;
   error?: string;
+  flowType?: FlowType;
 }
 
 /**

@@ -19,6 +19,7 @@ export const NameQuestion: React.FC<QuestionComponentProps> = ({
   value,
   onChange,
   error,
+  flowType,
 }) => {
   const nameData = (value as NameData) || { name: '', nicknames: [] };
   
@@ -62,11 +63,15 @@ export const NameQuestion: React.FC<QuestionComponentProps> = ({
     setNicknames(newNicknames);
   };
 
+  const isMineFlow = flowType === 'mine';
+  const nameLabel = isMineFlow ? "What's your name?" : "What's their name?";
+  const nicknameQuestion = isMineFlow ? "Do you have a nickname?" : "Do they have a nickname?";
+
   return (
     <div className="fyw-space-y-6">
       {/* Name input */}
       <Input
-        label="What's your name?"
+        label={nameLabel}
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Enter name..."
@@ -79,7 +84,7 @@ export const NameQuestion: React.FC<QuestionComponentProps> = ({
       {showNicknames && (
         <div className="fyw-space-y-4 fyw-animate-fadeIn">
           <p className="fyw-text-sm fyw-text-fyw-gray-400">
-            Do you have a nickname?{' '}
+            {nicknameQuestion}{' '}
             <span className="fyw-text-fyw-gray-500">
               (Optional • Up to {UI_CONFIG.MAX_NICKNAME_COUNT})
             </span>
