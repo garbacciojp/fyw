@@ -22,10 +22,9 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onClose, children, classNa
   return (
     <header
       className={cn(
-        'fyw-absolute fyw-top-0 fyw-left-0 fyw-right-0',
         'fyw-flex fyw-justify-end fyw-items-start',
+        'fyw-flex-shrink-0',
         'fyw-px-6 fyw-pt-6 md:fyw-px-8 md:fyw-pt-8',
-        'fyw-z-[100]',
         className
       )}
     >

@@ -12,6 +12,7 @@ import { cn } from '@/core';
 interface AppShellProps {
   children: ReactNode;
   showVideo?: boolean;
+  imageSrc?: string;
   debugPanel?: ReactNode;
   className?: string;
 }
@@ -23,6 +24,7 @@ interface AppShellProps {
 export const AppShell: React.FC<AppShellProps> = ({
   children,
   showVideo = true,
+  imageSrc = '/images/homepage-product.jpg',
   debugPanel,
   className,
 }) => {
@@ -41,7 +43,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         {showVideo && (
           <div className="fyw-hidden md:fyw-block md:fyw-w-1/2 fyw-h-full fyw-relative fyw-bg-gray-800">
             <img 
-              src="/images/homepage-product.jpg"
+              src={imageSrc}
               alt="Custom jewelry product showcase"
               className="fyw-w-full fyw-h-full fyw-object-cover"
               onLoad={() => console.log('✅ Image loaded successfully')}

@@ -59,7 +59,7 @@ export const QUESTIONS: QuestionConfig[] = [
   {
     id: 'relationship',
     flowType: 'theirs',
-    type: QUESTION_TYPES.RADIO as 'radio',
+    type: QUESTION_TYPES.TEXT_WITH_OPTIONS as 'text-with-options',
     formDataKey: 'relationship',
     required: true,
     getQuestionNumber: () => 3,
@@ -195,13 +195,14 @@ export const QUESTIONS: QuestionConfig[] = [
   {
     id: 'languages',
     flowType: 'both',
-    type: QUESTION_TYPES.RADIO as 'radio',
+    type: QUESTION_TYPES.TEXT_WITH_OPTIONS as 'text-with-options',
     formDataKey: 'languages',
     required: true,
     getQuestionNumber: (flow: FlowType) => (flow === FLOW_TYPES.MINE ? 6 : 8),
     getTotalQuestions: (flow: FlowType) => (flow === FLOW_TYPES.THEIRS ? 10 : 8),
     getTitle: () => 'Would you like the word to be in:',
     getSubtitle: () => 'Choose one language',
+    placeholder: 'Type your preferred language...',
     options: [
       { value: 'English', label: 'English' },
       { value: 'Arabic', label: 'Arabic' },
@@ -212,6 +213,7 @@ export const QUESTIONS: QuestionConfig[] = [
       { value: 'Korean', label: 'Korean' },
       { value: 'Thai', label: 'Thai' },
       { value: "I don't mind", label: "I don't mind" },
+      { value: 'other', label: 'Other' },
     ],
   },
 

@@ -7,4 +7,5 @@ export * from './questions.config';
 export * from './validation.config';
 export * from './constants.config';
 export * from './environment.config';
+export * from './images.config';
 

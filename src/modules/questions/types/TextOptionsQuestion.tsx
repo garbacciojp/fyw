@@ -29,23 +29,27 @@ export const TextOptionsQuestion: React.FC<TextOptionsQuestionProps> = ({
 }) => {
   const selectedValue = (value as string) || '';
   const [customText, setCustomText] = useState('');
+  const [otherSelected, setOtherSelected] = useState(false);
   
   // Determine if custom text is shown
-  const showCustomInput = selectedValue === 'other' || 
+  const showCustomInput = otherSelected || 
     (selectedValue && !options.find(o => o.value === selectedValue));
 
   // Initialize custom text if value doesn't match options
   useEffect(() => {
     if (selectedValue && !options.find(o => o.value === selectedValue)) {
       setCustomText(selectedValue);
+      setOtherSelected(true);
     }
   }, [selectedValue, options]);
 
   const handleOptionChange = (newValue: string) => {
     if (newValue === 'other') {
+      setOtherSelected(true);
       onChange('');
       setCustomText('');
     } else {
+      setOtherSelected(false);
       onChange(newValue);
       setCustomText('');
       // Auto-advance for non-other options
@@ -62,12 +66,12 @@ export const TextOptionsQuestion: React.FC<TextOptionsQuestionProps> = ({
   };
 
   return (
-    <div className="fyw-space-y-4">
+    <>
       {/* Radio options in a grid layout */}
-      <div className="fyw-grid fyw-grid-cols-1 md:fyw-grid-cols-2 fyw-gap-4">
+      <div className="fyw-grid fyw-grid-cols-1 md:fyw-grid-cols-2 fyw-gap-2 fyw-mb-2">
         {options.map((option) => {
           const isChecked = option.value === 'other' 
-            ? showCustomInput 
+            ? otherSelected
             : selectedValue === option.value;
           
           return (
@@ -84,18 +88,20 @@ export const TextOptionsQuestion: React.FC<TextOptionsQuestionProps> = ({
 
       {/* Custom text input */}
       {showCustomInput && (
-        <div className="fyw-mt-4 fyw-animate-fadeIn">
-          <Input
-            value={customText}
-            onChange={handleCustomTextChange}
-            placeholder={placeholder}
-            autoFocus
-          />
+        <div className="fyw-flex fyw-gap-2 fyw-mb-2 fyw-items-stretch">
+          <div className="fyw-flex-1 fyw-min-w-0">
+            <Input
+              value={customText}
+              onChange={handleCustomTextChange}
+              placeholder={placeholder}
+              autoFocus
+            />
+          </div>
         </div>
       )}
       
       {error && <p className="fyw-text-sm fyw-text-red-500 fyw-mt-2">{error}</p>}
-    </div>
+    </>
   );
 };
 

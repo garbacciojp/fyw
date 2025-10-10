@@ -15,7 +15,7 @@ import { openaiService } from '@/core/services';
 import { AppShell, AppHeader, AppContent } from './layout';
 import { WelcomeScreen, QuestionScreen, LoadingScreen, ResultsScreen } from './screens';
 import { DebugPanel } from './debug';
-import { APP_SCREENS } from '@/config';
+import { APP_SCREENS, getQuestionImage, DEFAULT_IMAGE } from '@/config';
 
 /**
  * Main application component
@@ -105,6 +105,15 @@ export const App: React.FC = () => {
     setError(null);
   }, [resetForm]);
 
+  // Get current image based on screen and question
+  const getCurrentImage = (): string => {
+    if (screen === APP_SCREENS.QUESTIONS && questionFlow.currentQuestion) {
+      const questionNumber = questionFlow.currentQuestion.getQuestionNumber(flowType);
+      return getQuestionImage(questionNumber);
+    }
+    return DEFAULT_IMAGE;
+  };
+
   // Render current screen
   const renderScreen = () => {
     switch (screen) {
@@ -165,6 +174,7 @@ export const App: React.FC = () => {
   return (
     <AppShell 
       showVideo={true}
+      imageSrc={getCurrentImage()}
       debugPanel={
         <DebugPanel
           formData={formData}

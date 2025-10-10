@@ -26,8 +26,16 @@ export const RadioButton: React.FC<RadioButtonProps> = ({
   onChange,
   disabled = false,
 }) => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!disabled) {
+      onChange(value);
+    }
+  };
+
   return (
     <label
+      onClick={handleClick}
       className={cn(
         // Layout & Sizing - matching Input component
         'fyw-w-full fyw-px-4 fyw-py-4',
@@ -49,14 +57,15 @@ export const RadioButton: React.FC<RadioButtonProps> = ({
         disabled && 'fyw-opacity-50 fyw-cursor-not-allowed'
       )}
     >
-      {/* Hidden native radio */}
+      {/* Hidden native radio - no interaction */}
       <input
         type="radio"
         value={value}
         checked={checked}
-        onChange={() => onChange(value)}
+        onChange={() => {}} // Controlled by label click
         disabled={disabled}
-        className="fyw-sr-only"
+        tabIndex={-1}
+        className="fyw-sr-only fyw-pointer-events-none"
       />
 
       {/* Label text - centered like Input */}
