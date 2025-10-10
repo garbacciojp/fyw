@@ -12,7 +12,6 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '@/core';
-import { UI_CONFIG } from '@/config';
 
 interface AppShellProps {
   children: ReactNode;
