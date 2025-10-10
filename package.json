@@ -12,11 +12,12 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "start": "vite preview --port $PORT --host 0.0.0.0"
+    "start": "node server.js"
   },
   "dependencies": {
     "crypto-js": "^4.2.0",
     "dompurify": "^3.0.8",
+    "express": "^4.18.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "zod": "^3.22.4"
