@@ -85,16 +85,6 @@ export const App: React.FC = () => {
     // Keep screen on QUESTIONS and keep current flowType
   }, [resetForm, questionFlow]);
 
-  // Handle start over (from results) - return to welcome screen
-  const handleStartOver = useCallback(() => {
-    resetForm();
-    storage.clearFormData();
-    setScreen(APP_SCREENS.WELCOME as AppScreen);
-    setFlowType('mine');
-    setSuggestions(null);
-    setError(null);
-  }, [resetForm]);
-
   // Handle close - return to welcome screen
   const handleClose = useCallback(() => {
     resetForm();
@@ -160,8 +150,6 @@ export const App: React.FC = () => {
           <ResultsScreen
             words={suggestions.words}
             userName={formData.nameData?.name || 'you'}
-            onClose={handleClose}
-            onStartOver={handleStartOver}
           />
         ) : null;
 
@@ -187,18 +175,18 @@ export const App: React.FC = () => {
         // WelcomeScreen handles its own full-height layout
         renderScreen()
       ) : (
-        // All other screens need flex container to work with AppHeader
+        // All other screens with scrollable content
         <div className="fyw-flex fyw-flex-col fyw-w-full fyw-overflow-hidden" style={{ height: '100%', maxHeight: '100%' }}>
-          {/* Close button for non-welcome screens */}
-          <AppHeader onClose={handleClose} />
-          
           {/* Content area - scrollable with strict height constraint */}
           <div className="fyw-flex-1 fyw-overflow-y-auto fyw-overflow-x-hidden fyw-overscroll-none" style={{ overflowAnchor: 'none', maxHeight: '100%', WebkitOverflowScrolling: 'touch' }}>
-            {screen === APP_SCREENS.QUESTIONS ? (
-              // QuestionScreen handles its own layout
+            {/* Close button inside scrollable area */}
+            <AppHeader onClose={handleClose} />
+            
+            {screen === APP_SCREENS.QUESTIONS || screen === APP_SCREENS.LOADING ? (
+              // QuestionScreen and LoadingScreen handle their own layout
               renderScreen()
             ) : (
-              // Other screens (Loading, Results) use AppContent for proper scrolling
+              // Results screen uses AppContent for proper scrolling
               <AppContent>
                 {renderScreen()}
               </AppContent>

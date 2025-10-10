@@ -8,5 +8,6 @@ export * from './RadioButton';
 export * from './Checkbox';
 export * from './ProgressBar';
 export * from './LoadingSpinner';
+export * from './Carousel';
 
 
