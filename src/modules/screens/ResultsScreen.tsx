@@ -81,7 +81,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           <h1 className="fyw-text-xl fyw-uppercase fyw-tracking-wider fyw-text-fyw-white fyw-font-normal fyw-mb-2">
             {isMineFlow ? 'YOUR WORD' : 'THEIR WORD'}
           </h1>
-          <h2 className="fyw-font-heading fyw-text-6xl md:fyw-text-7xl fyw-font-normal fyw-uppercase fyw-text-fyw-white fyw-leading-none">
+          <h2 className="fyw-font-heading fyw-text-6xl md:fyw-text-7xl fyw-font-normal fyw-uppercase fyw-text-fyw-white fyw-leading-[0.8] fyw-break-words fyw-max-w-full fyw-px-4">
             PERFECT FOR {userName.toUpperCase()}
           </h2>
         </div>
