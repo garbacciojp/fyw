@@ -16,6 +16,12 @@ export default defineConfig({
       '@/styles': path.resolve(__dirname, './src/styles'),
     },
   },
+  preview: {
+    host: '0.0.0.0',
+    port: process.env.PORT ? parseInt(process.env.PORT) : 4173,
+    strictPort: false,
+    allowedHosts: ['.ondigitalocean.app'],
+  },
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/widgets/findYourWord.tsx'),
