@@ -43,7 +43,7 @@ export const QuestionHeader: React.FC<QuestionHeaderProps> = ({
       {/* Main heading - centered */}
       <div className="fyw-mb-6 fyw-text-center">
         <h1 className="fyw-text-xl fyw-uppercase fyw-tracking-wider fyw-text-fyw-white fyw-font-normal fyw-mb-2">
-          FIND YOUR WORD
+          FIND <span className="fyw-font-extrabold">{flowType === 'mine' ? 'YOUR' : 'THEIR'}</span> WORD
         </h1>
         <div className="fyw-text-sm fyw-text-fyw-gray-400">
           (for{' '}

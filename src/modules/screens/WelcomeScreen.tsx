@@ -31,7 +31,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSelectFlow, clas
       >
         <img 
           src={DEFAULT_IMAGE}
-          alt="Custom jewelry product showcase"
+          alt="Custom jewellery product showcase"
           className="fyw-w-full fyw-h-full fyw-object-cover"
           style={{ objectPosition: 'center 75%' }}
         />
@@ -55,15 +55,14 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSelectFlow, clas
 
         {/* Main Heading */}
         <h1 className="fyw-font-heading fyw-text-6xl md:fyw-text-7xl fyw-font-normal fyw-uppercase fyw-text-white fyw-leading-[0.8] fyw-space-y-1">
-          <div>THE PERFECT</div>
-          <div>WORD FOR YOUR</div>
-          <div>CUSTOM JEWELLERY</div>
+          <div>YOUR STORY.</div>
+          <div>YOUR MEANING.</div>
+          <div>YOUR WORD.</div>
         </h1>
 
         {/* Description */}
         <p className="fyw-text-base fyw-text-white fyw-leading-relaxed fyw-text-center fyw-px-1 md:fyw-px-0">
-          Everyone's story is unique, just like every word we suggest. Take our personalised quiz
-          to discover meaningful words that resonate with your style, heritage, and emotions.
+          Everyone's story is one of a kind, and your word should be too. Uncover the word that feels just right for you or someone special.
         </p>
 
         {/* Action Buttons */}

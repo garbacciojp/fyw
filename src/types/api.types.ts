@@ -33,7 +33,7 @@ export interface WordSuggestion {
 }
 
 /**
- * Complete jewelry name suggestion response
+ * Complete jewellery name suggestion response
  */
 export interface JewelryNameSuggestion {
   words: WordSuggestion[];

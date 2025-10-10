@@ -143,13 +143,14 @@ export const App: React.FC = () => {
       }
 
       case APP_SCREENS.LOADING:
-        return <LoadingScreen />;
+        return <LoadingScreen flowType={flowType} />;
 
       case APP_SCREENS.RESULTS:
         return suggestions ? (
           <ResultsScreen
             words={suggestions.words}
             userName={formData.nameData?.name || 'you'}
+            flowType={flowType}
           />
         ) : null;
 
@@ -188,7 +189,7 @@ export const App: React.FC = () => {
             >
               <img 
                 src={getCurrentImage()}
-                alt="Custom jewelry product showcase"
+                alt="Custom jewellery product showcase"
                 className="fyw-w-full fyw-h-full fyw-object-cover"
                 style={{ objectPosition: 'center 75%' }}
               />

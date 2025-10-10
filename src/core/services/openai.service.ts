@@ -1,6 +1,6 @@
 /**
  * OpenAI Service
- * Handles jewelry name suggestions using OpenAI API
+ * Handles jewellery name suggestions using OpenAI API
  * 
  * Single Responsibility: OpenAI API integration
  * 
@@ -28,7 +28,7 @@ class OpenAIService {
   }
 
   /**
-   * Generate jewelry name suggestions
+   * Generate jewellery name suggestions
    */
   async generateSuggestions(userData: UserDataPayload): Promise<JewelryNameSuggestion> {
     if (!this.apiKey) {

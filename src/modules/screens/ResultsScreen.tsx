@@ -8,12 +8,13 @@
 
 import { useState } from 'react';
 import { Button, Carousel } from '@/modules/ui';
-import type { WordSuggestion } from '@/types';
+import type { WordSuggestion, FlowType } from '@/types';
 import { cn } from '@/core';
 
 interface ResultsScreenProps {
   words: WordSuggestion[];
   userName?: string;
+  flowType?: FlowType;
   className?: string;
 }
 
@@ -23,8 +24,10 @@ interface ResultsScreenProps {
 export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   words,
   userName = 'you',
+  flowType = 'mine',
   className,
 }) => {
+  const isMineFlow = flowType === 'mine';
   const [copied, setCopied] = useState(false);
   const [copiedWordIndex, setCopiedWordIndex] = useState<number | null>(null);
 
@@ -76,7 +79,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         {/* Main heading - centered */}
         <div className="fyw-mb-6 fyw-text-center">
           <h1 className="fyw-text-xl fyw-uppercase fyw-tracking-wider fyw-text-fyw-white fyw-font-normal fyw-mb-2">
-            YOUR WORDS
+            {isMineFlow ? 'YOUR WORD' : 'THEIR WORD'}
           </h1>
           <h2 className="fyw-font-heading fyw-text-6xl md:fyw-text-7xl fyw-font-normal fyw-uppercase fyw-text-fyw-white fyw-leading-none">
             PERFECT FOR {userName.toUpperCase()}
@@ -85,7 +88,9 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
 
         {/* Description */}
         <p className="fyw-text-base fyw-text-fyw-white fyw-leading-relaxed fyw-text-center fyw-max-w-md fyw-mx-auto">
-          Here are meaningful words that resonate with your story, carefully selected to create beautiful, personalised jewellery.
+          {isMineFlow 
+            ? 'Meaningful words, carefully selected for you, ready to be transformed into jewellery that tells your story.'
+            : 'Meaningful words, carefully selected for them, ready to be transformed into jewellery that tells their story.'}
         </p>
       </header>
 

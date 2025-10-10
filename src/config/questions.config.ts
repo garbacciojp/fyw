@@ -26,7 +26,10 @@ export const QUESTIONS: QuestionConfig[] = [
     getQuestionNumber: () => 1,
     getTotalQuestions: (flow: FlowType) => (flow === FLOW_TYPES.THEIRS ? 10 : 8),
     getTitle: () => "Let's start with the basics",
-    getSubtitle: () => "We'll use this information to find the perfect word for your jewelry",
+    getSubtitle: (flow: FlowType) => 
+      flow === FLOW_TYPES.MINE 
+        ? "We'll use this information to find the perfect word for your jewellery."
+        : "We'll use this information to find the perfect word for their jewellery.",
   },
 
   // ==========================================
@@ -43,8 +46,8 @@ export const QUESTIONS: QuestionConfig[] = [
     getTitle: (flow: FlowType) =>
       flow === FLOW_TYPES.MINE ? "What's your age range?" : "What's their age range?",
     getSubtitle: (flow: FlowType) => flow === FLOW_TYPES.MINE 
-      ? 'This helps us suggest words that resonate with your generation'
-      : 'This helps us suggest words that resonate with their generation',
+      ? 'This helps us suggest words that resonate with your generation.'
+      : 'This helps us suggest words that resonate with their generation.',
     options: [
       { value: '16-25', label: '16-25 years old' },
       { value: '26-35', label: '26-35 years old' },
@@ -67,7 +70,7 @@ export const QUESTIONS: QuestionConfig[] = [
     getQuestionNumber: () => 3,
     getTotalQuestions: () => 10,
     getTitle: () => 'What is your relationship to this person?',
-    getSubtitle: () => 'This helps us understand the context and find the perfect word',
+    getSubtitle: () => 'This helps us understand the context and find the perfect word.',
     options: [
       { value: 'friend', label: 'A Friend' },
       { value: 'colleague', label: 'Colleague' },
@@ -93,7 +96,7 @@ export const QUESTIONS: QuestionConfig[] = [
     getQuestionNumber: () => 4,
     getTotalQuestions: () => 10,
     getTitle: () => 'What is this gift for?',
-    getSubtitle: () => 'This helps us find words that match the occasion',
+    getSubtitle: () => 'This helps us find words that match the occasion.',
     options: [
       { value: 'anniversary', label: 'Anniversary' },
       { value: 'birthday', label: 'Birthday' },
@@ -126,7 +129,7 @@ export const QUESTIONS: QuestionConfig[] = [
     getSubtitle: (flow: FlowType) =>
       flow === FLOW_TYPES.MINE
         ? 'What are your interests? (Select up to 3)'
-        : 'What are their interests? (Select up to 3 if you know)',
+        : 'What are their interests? (Select up to 3)',
     maxSelections: 3,
     allowCustom: true,
     options: [
@@ -168,8 +171,8 @@ export const QUESTIONS: QuestionConfig[] = [
       ? 'Is there a faith or heritage you connect with?'
       : 'Is there a faith or heritage they connect with?',
     getSubtitle: (flow: FlowType) => flow === FLOW_TYPES.MINE
-      ? "Enter your faith or heritage if it's important to you"
-      : "Enter their faith or heritage if it's important to them",
+      ? "Enter your faith or heritage if it's important to you."
+      : "Enter their faith or heritage if it's important to them.",
     placeholder: 'e.g., Christianity, Irish heritage, etc.',
   },
 
@@ -185,7 +188,7 @@ export const QUESTIONS: QuestionConfig[] = [
     getQuestionNumber: (flow: FlowType) => (flow === FLOW_TYPES.MINE ? 5 : 7),
     getTotalQuestions: (flow: FlowType) => (flow === FLOW_TYPES.THEIRS ? 10 : 8),
     getTitle: () => 'What kind of meaning do you want the word to have?',
-    getSubtitle: () => 'Choose one that best matches what you want',
+    getSubtitle: () => 'Choose one that best matches what you want.',
     options: [
       { value: 'Experience / concept', label: 'Experience / Concept' },
       { value: 'Mood / feeling', label: 'Mood / Feeling' },
@@ -207,7 +210,7 @@ export const QUESTIONS: QuestionConfig[] = [
     getQuestionNumber: (flow: FlowType) => (flow === FLOW_TYPES.MINE ? 6 : 8),
     getTotalQuestions: (flow: FlowType) => (flow === FLOW_TYPES.THEIRS ? 10 : 8),
     getTitle: () => 'Would you like the word to be in:',
-    getSubtitle: () => 'Choose one language',
+    getSubtitle: () => 'Choose one language:',
     placeholder: 'Type your preferred language...',
     options: [
       { value: 'English', label: 'English' },

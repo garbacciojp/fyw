@@ -39,8 +39,8 @@ export const QuestionRouter: React.FC<QuestionRouterProps> = ({
       onChange={onChange}
       onComplete={onComplete}
       error={error}
-      flowType={flowType}
       {...config} // Pass all config as props
+      flowType={flowType} // Override config.flowType with actual flow
     />
   );
 };

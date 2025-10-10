@@ -57,7 +57,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           <div className="fyw-hidden md:fyw-block md:fyw-w-1/2 fyw-h-full fyw-relative fyw-bg-gray-800">
             <img 
               src={imageSrc}
-              alt="Custom jewelry product showcase"
+              alt="Custom jewellery product showcase"
               className="fyw-w-full fyw-h-full fyw-object-cover"
               style={{ objectPosition: 'center 75%' }}
               onLoad={() => console.log('✅ Image loaded successfully')}

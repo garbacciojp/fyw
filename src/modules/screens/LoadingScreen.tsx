@@ -7,9 +7,10 @@
  */
 
 import { cn } from '@/core';
+import type { FlowType } from '@/types';
 
 interface LoadingScreenProps {
-  message?: string;
+  flowType?: FlowType;
   className?: string;
 }
 
@@ -17,9 +18,14 @@ interface LoadingScreenProps {
  * Loading screen component
  */
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({
-  message = 'Curating meaningful words that resonate with your story',
+  flowType = 'mine',
   className,
 }) => {
+  const isMineFlow = flowType === 'mine';
+  const title = isMineFlow ? 'Finding Your Word' : 'Finding Their Word';
+  const message = isMineFlow 
+    ? 'Curating words that speak to your story'
+    : 'Curating words that speak to their story';
   return (
     <div
       className={cn(
@@ -58,7 +64,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
 
       {/* Text */}
       <h2 className="fyw-font-heading fyw-text-4xl fyw-font-normal fyw-text-fyw-white fyw-mb-4">
-        Finding Your Words
+        {title}
       </h2>
       <p className="fyw-text-fyw-gray-400 fyw-max-w-md">{message}</p>
 
