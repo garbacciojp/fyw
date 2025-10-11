@@ -13,8 +13,8 @@ node_modules/
 # Testing
 coverage/
 
-# Production builds
-dist/
+# Production builds (keeping dist/ committed for Digital Ocean deployment)
+# dist/  ← Commented out so widget files are deployed
 build/
 
 # Debug
@@ -42,3 +42,6 @@ temp/
 # OS
 Thumbs.db
 .DS_Store
+
+# But keep dist/.DS_Store ignored
+dist/.DS_Store
