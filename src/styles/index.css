@@ -26,10 +26,11 @@ html, body, #root {
 }
 
 /* Custom Fonts - Scoped to FYW Widget */
+/* Note: In production, fonts are served from Digital Ocean alongside the widget */
 /* Bebas Neue - Headings */
 @font-face {
   font-family: 'Bebas Neue';
-  src: url('/fonts/bebas-neue/BebasNeue-Regular.woff2') format('woff2');
+  src: url('https://fyw-lrqe8.ondigitalocean.app/widget/v2/fonts/bebas-neue/BebasNeue-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -38,7 +39,7 @@ html, body, #root {
 /* Poppins - Body Text */
 @font-face {
   font-family: 'Poppins';
-  src: url('/fonts/poppins/Poppins-Regular.woff2') format('woff2');
+  src: url('https://fyw-lrqe8.ondigitalocean.app/widget/v2/fonts/poppins/Poppins-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -46,7 +47,7 @@ html, body, #root {
 
 @font-face {
   font-family: 'Poppins';
-  src: url('/fonts/poppins/Poppins-Medium.woff2') format('woff2');
+  src: url('https://fyw-lrqe8.ondigitalocean.app/widget/v2/fonts/poppins/Poppins-Medium.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -54,7 +55,7 @@ html, body, #root {
 
 @font-face {
   font-family: 'Poppins';
-  src: url('/fonts/poppins/Poppins-SemiBold.woff2') format('woff2');
+  src: url('https://fyw-lrqe8.ondigitalocean.app/widget/v2/fonts/poppins/Poppins-SemiBold.woff2') format('woff2');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -62,7 +63,7 @@ html, body, #root {
 
 @font-face {
   font-family: 'Poppins';
-  src: url('/fonts/poppins/Poppins-Bold.woff2') format('woff2');
+  src: url('https://fyw-lrqe8.ondigitalocean.app/widget/v2/fonts/poppins/Poppins-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
