@@ -137,12 +137,16 @@ const widgetInstance = new FindYourWordWidget({
   autoOpen,
 });
 
+// Expose to window object
 window.FindYourWordWidget = widgetInstance;
 
 // Auto-open if requested
 if (autoOpen) {
   widgetInstance.open();
 }
+
+// Default export for IIFE mode (required by Vite library mode)
+export default widgetInstance;
 
 // For development (when running via Vite)
 if (import.meta.env.DEV) {
