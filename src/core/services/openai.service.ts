@@ -1,10 +1,10 @@
 /**
  * OpenAI Service
- * Handles jewellery name suggestions using OpenAI API
+ * Handles jewellery name suggestions by calling Digital Ocean server API
  * 
- * Single Responsibility: OpenAI API integration
+ * Single Responsibility: API integration with backend server
  * 
- * ⚠️ CRITICAL: This uses the same proven logic from v1
+ * ⚠️ SECURITY: API key stays on server, widget only calls our backend
  */
 
 import type { UserDataPayload, JewelryNameSuggestion, WordSuggestion, OpenAIResponse } from '@/types';
@@ -12,58 +12,39 @@ import { API_CONFIG } from '@/config';
 
 /**
  * OpenAI Service Class
+ * Calls Digital Ocean server which proxies to OpenAI
  */
 class OpenAIService {
-  private readonly apiKey: string;
-  private readonly promptId: string;
-  private readonly baseUrl = 'https://api.openai.com/v1';
+  private readonly apiBaseUrl: string;
 
   constructor() {
-    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
-    this.promptId = import.meta.env.VITE_OPENAI_PROMPT_ID || '';
+    // Get API base URL from environment or use default
+    this.apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
-    if (!this.apiKey) {
-      console.warn('⚠️ OpenAI API key not configured');
-    }
+    console.log('🔧 OpenAI Service configured with API URL:', this.apiBaseUrl);
   }
 
   /**
    * Generate jewellery name suggestions
+   * Calls our backend server which proxies to OpenAI (keeps API key secure)
    */
   async generateSuggestions(userData: UserDataPayload): Promise<JewelryNameSuggestion> {
-    if (!this.apiKey) {
-      throw new Error('OpenAI API key is not configured');
-    }
-
     // User data is already validated by Zod schemas and sanitized by form inputs
     const sanitizedData = userData;
 
     console.log('🚀 Generating suggestions for:', { wordType: sanitizedData.wordType });
 
-    // Prepare API payload - send raw JSON instead of natural language
-    const payload = {
-      prompt: {
-        id: this.promptId,
-        version: '1',
-      },
-      input: [{ 
-        role: 'user', 
-        content: JSON.stringify(sanitizedData) 
-      }],
-    };
-
-    // Make API request with timeout
+    // Make API request to our server (not directly to OpenAI)
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT_MS);
 
     try {
-      const response = await fetch(`${this.baseUrl}/responses`, {
+      const response = await fetch(`${this.apiBaseUrl}/api/suggest-words`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ userData: sanitizedData }),
         signal: controller.signal,
       });
 
@@ -71,7 +52,7 @@ class OpenAIService {
 
       if (!response.ok) {
         const errorText = await response.text().catch(() => 'Unknown error');
-        throw new Error(`OpenAI API error (${response.status}): ${errorText}`);
+        throw new Error(`API error (${response.status}): ${errorText}`);
       }
 
       const apiResponse: OpenAIResponse = await response.json();

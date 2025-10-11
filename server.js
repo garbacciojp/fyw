@@ -1,11 +1,16 @@
 /**
- * Simple Express server for Digital Ocean App Platform
- * Serves the built widget files with proper CORS headers for Shopify embedding
+ * Express server for Digital Ocean App Platform
+ * 1. Serves the built widget files with proper CORS headers for Shopify embedding
+ * 2. Proxies OpenAI API requests (keeps API key secure on server)
  */
 
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,11 +18,19 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Enable CORS for all origins (needed for Shopify embedding)
+// Parse JSON request bodies
+app.use(express.json({ limit: '10mb' }));
+
+// Enable CORS for all origins (needed for Shopify embedding and API requests)
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
   
   // Set appropriate content types
   if (req.path.endsWith('.js')) {
@@ -49,6 +62,98 @@ app.use('/widget/v2', express.static(path.join(__dirname, 'dist'), {
 
 // Also serve from root for easy access
 app.use(express.static(path.join(__dirname, 'dist')));
+
+// ============================================================================
+// API ENDPOINTS
+// ============================================================================
+
+/**
+ * API Proxy Endpoint for OpenAI
+ * Proxies requests to OpenAI API to keep API key secure on server
+ * POST /api/suggest-words
+ */
+app.post('/api/suggest-words', async (req, res) => {
+  try {
+    const { userData } = req.body;
+
+    // Validate request
+    if (!userData) {
+      return res.status(400).json({ 
+        error: 'Missing userData in request body' 
+      });
+    }
+
+    // Check API key is configured
+    const apiKey = process.env.OPENAI_API_KEY;
+    const promptId = process.env.OPENAI_PROMPT_ID;
+
+    if (!apiKey) {
+      console.error('❌ OPENAI_API_KEY not configured');
+      return res.status(500).json({ 
+        error: 'Server configuration error: API key not set' 
+      });
+    }
+
+    if (!promptId) {
+      console.error('❌ OPENAI_PROMPT_ID not configured');
+      return res.status(500).json({ 
+        error: 'Server configuration error: Prompt ID not set' 
+      });
+    }
+
+    console.log('📝 Received request for word suggestions');
+    console.log('📊 User data:', JSON.stringify(userData, null, 2));
+
+    // Prepare OpenAI API request
+    const openaiPayload = {
+      prompt: {
+        id: promptId,
+        version: '1'
+      },
+      input: [{ 
+        role: 'user', 
+        content: JSON.stringify(userData)
+      }]
+    };
+
+    console.log('🚀 Sending request to OpenAI...');
+
+    // Make request to OpenAI
+    const openaiResponse = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(openaiPayload)
+    });
+
+    if (!openaiResponse.ok) {
+      const errorText = await openaiResponse.text().catch(() => 'Unknown error');
+      console.error('❌ OpenAI API error:', {
+        status: openaiResponse.status,
+        statusText: openaiResponse.statusText,
+        error: errorText
+      });
+      
+      return res.status(openaiResponse.status).json({ 
+        error: `OpenAI API error: ${errorText}` 
+      });
+    }
+
+    const openaiData = await openaiResponse.json();
+    console.log('✅ Received response from OpenAI');
+
+    // Return OpenAI response to client
+    res.json(openaiData);
+
+  } catch (error) {
+    console.error('❌ Error in API proxy:', error);
+    res.status(500).json({ 
+      error: error instanceof Error ? error.message : 'Internal server error' 
+    });
+  }
+});
 
 // Health check endpoint
 app.get('/health', (req, res) => {
