@@ -56,6 +56,9 @@ class FindYourWordWidget {
       return;
     }
 
+    // Ensure viewport supports safe area insets (for iPhone notch/home bar)
+    this.ensureSafeAreaSupport();
+
     // Create container
     this.container = document.createElement('div');
     this.container.id = 'fyw-widget-root';
@@ -75,6 +78,41 @@ class FindYourWordWidget {
     if (this.config.debug) {
       console.log('✅ Widget opened');
     }
+  }
+
+  /**
+   * Ensure viewport meta tag is optimized for all mobile devices
+   * Handles iOS safe areas AND general mobile browser compatibility
+   */
+  private ensureSafeAreaSupport(): void {
+    let viewport = document.querySelector('meta[name="viewport"]') as HTMLMetaElement;
+    
+    if (!viewport) {
+      // Create viewport meta tag if it doesn't exist
+      viewport = document.createElement('meta');
+      viewport.name = 'viewport';
+      document.head.appendChild(viewport);
+    }
+    
+    // Universal mobile viewport configuration
+    // Works on iOS, Android, tablets, all modern mobile browsers
+    const requiredSettings = [
+      'width=device-width',
+      'initial-scale=1',
+      'viewport-fit=cover', // iOS safe area support (gracefully ignored on other devices)
+    ];
+    
+    let content = viewport.content;
+    
+    // Add missing settings
+    requiredSettings.forEach(setting => {
+      const key = setting.split('=')[0];
+      if (!content.includes(key)) {
+        content = content + (content ? ', ' : '') + setting;
+      }
+    });
+    
+    viewport.content = content;
   }
 
   /**

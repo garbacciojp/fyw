@@ -34,10 +34,17 @@ export const QuestionFooter: React.FC<QuestionFooterProps> = ({
       className={cn(
         'fyw-flex-shrink-0',
         'fyw-px-6 md:fyw-px-8',
-        'fyw-pt-8 fyw-pb-4',
+        'fyw-pt-8',
+        // Generous bottom padding for all mobile browsers
+        'fyw-pb-8 sm:fyw-pb-6',
         'fyw-bg-fyw-black',
         className
       )}
+      style={{ 
+        // Add extra bottom padding for iOS safe area + general mobile browser UI
+        // This works on all devices - iOS uses safe area, others get min 2rem
+        paddingBottom: 'max(2rem, calc(env(safe-area-inset-bottom) + 1rem))' 
+      }}
     >
       <div className="fyw-w-full fyw-max-w-md fyw-mx-auto fyw-flex fyw-flex-col fyw-gap-3">
         {/* Continue button */}

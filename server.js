@@ -48,6 +48,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// Serve test files from root (for local testing)
+app.use(express.static(path.join(__dirname), {
+  index: false, // Don't auto-serve index.html
+  setHeaders: (res, filepath) => {
+    if (filepath.endsWith('.html')) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache'); // Don't cache test files
+    }
+  }
+}));
+
 // Serve widget files from dist directory
 app.use('/widget/v2', express.static(path.join(__dirname, 'dist'), {
   setHeaders: (res, filepath) => {
