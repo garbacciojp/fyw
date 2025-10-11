@@ -12,6 +12,7 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '@/core';
+import { DEFAULT_IMAGE } from '@/config/images.config';
 
 interface AppShellProps {
   children: ReactNode;
@@ -28,7 +29,7 @@ interface AppShellProps {
 export const AppShell: React.FC<AppShellProps> = ({
   children,
   showVideo = true,
-  imageSrc = '/images/homepage-product.jpg',
+  imageSrc = DEFAULT_IMAGE,
   debugPanel,
   className,
 }) => {
