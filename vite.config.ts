@@ -46,6 +46,10 @@ export default defineConfig({
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify('production'),
+    // Hardcode production API URL (like the old working version)
+    'import.meta.env.VITE_API_BASE_URL': JSON.stringify('https://fyw-lrqe8.ondigitalocean.app'),
+    'import.meta.env.VITE_DEBUG_MODE': JSON.stringify('false'),
+    'import.meta.env.PROD': true,
   },
 });
 
