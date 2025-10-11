@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SIMPLE TEST</title>
+</head>
+<body>
+  <h1>SIMPLE TEST - Click button after page loads</h1>
+  
+  <button id="testBtn" onclick="testIt()" style="padding: 20px; font-size: 20px; background: red; color: white;">
+    CLICK TO TEST WIDGET
+  </button>
+  
+  <div id="output" style="margin-top: 20px; font-family: monospace; white-space: pre-wrap;"></div>
+  
+  <script>
+    function output(msg) {
+      document.getElementById('output').textContent += msg + '\n';
+      console.log(msg);
+    }
+    
+    function testIt() {
+      output('=== TESTING ===');
+      output('typeof window.FindYourWordWidget: ' + typeof window.FindYourWordWidget);
+      
+      if (window.FindYourWordWidget) {
+        output('EXISTS!');
+        output('Calling open()...');
+        try {
+          window.FindYourWordWidget.open();
+          output('SUCCESS!');
+        } catch(e) {
+          output('ERROR: ' + e.message);
+          output('STACK: ' + e.stack);
+        }
+      } else {
+        output('DOES NOT EXIST!');
+        output('Window keys with Find: ' + Object.keys(window).filter(k => k.toLowerCase().includes('find')).join(', '));
+      }
+    }
+    
+    // Check after load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        output('Page loaded, checking...');
+        output('window.FindYourWordWidget: ' + typeof window.FindYourWordWidget);
+      }, 1000);
+    });
+    
+    // Catch errors
+    window.onerror = (msg) => {
+      output('GLOBAL ERROR: ' + msg);
+    };
+  </script>
+  
+  <!-- Widget files -->
+  <link rel="stylesheet" href="https://fyw-lrqe8.ondigitalocean.app/widget/v2/style.css">
+  <script src="https://fyw-lrqe8.ondigitalocean.app/widget/v2/find-your-word-v2.iife.js"></script>
+  
+</body>
+</html>
+

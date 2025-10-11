@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEBUG TEST - Widget Loading</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 40px;
+      background: #000;
+      color: #0f0;
+    }
+    .log {
+      margin: 10px 0;
+      padding: 10px;
+      background: #111;
+      border: 1px solid #0f0;
+    }
+    .error { color: #f00; border-color: #f00; }
+    .success { color: #0f0; border-color: #0f0; }
+    .info { color: #ff0; border-color: #ff0; }
+    button {
+      background: #0f0;
+      color: #000;
+      border: none;
+      padding: 20px 40px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🐛 DEBUG TEST - Widget Loading</h1>
+  <div id="logs"></div>
+  
+  <button onclick="testWidget()">TRY TO OPEN WIDGET</button>
+  
+  <script>
+    function log(message, type = 'info') {
+      const logsDiv = document.getElementById('logs');
+      const logDiv = document.createElement('div');
+      logDiv.className = `log ${type}`;
+      logDiv.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      logsDiv.appendChild(logDiv);
+      console.log(message);
+    }
+    
+    log('Starting debug tests...', 'info');
+    log('Loading widget from: https://fyw-lrqe8.ondigitalocean.app/widget/v2/find-your-word-v2.iife.js', 'info');
+    
+    function testWidget() {
+      log('=== TESTING WIDGET ===', 'info');
+      
+      // Check if window.FindYourWordWidget exists
+      if (typeof window.FindYourWordWidget === 'undefined') {
+        log('❌ window.FindYourWordWidget is UNDEFINED', 'error');
+        log('Widget did not load or did not expose itself to window', 'error');
+        return;
+      }
+      
+      log('✅ window.FindYourWordWidget exists!', 'success');
+      log('Type: ' + typeof window.FindYourWordWidget, 'success');
+      log('Keys: ' + Object.keys(window.FindYourWordWidget).join(', '), 'success');
+      
+      // Check methods
+      if (typeof window.FindYourWordWidget.open === 'function') {
+        log('✅ open() method exists', 'success');
+      } else {
+        log('❌ open() method is missing', 'error');
+      }
+      
+      if (typeof window.FindYourWordWidget.close === 'function') {
+        log('✅ close() method exists', 'success');
+      } else {
+        log('❌ close() method is missing', 'error');
+      }
+      
+      if (typeof window.FindYourWordWidget.isOpen === 'function') {
+        log('✅ isOpen() method exists', 'success');
+      } else {
+        log('❌ isOpen() method is missing', 'error');
+      }
+      
+      // Try to open
+      try {
+        log('Attempting to call window.FindYourWordWidget.open()...', 'info');
+        window.FindYourWordWidget.open();
+        log('✅ open() called successfully!', 'success');
+        
+        setTimeout(() => {
+          const isOpen = window.FindYourWordWidget.isOpen();
+          log('Widget isOpen: ' + isOpen, isOpen ? 'success' : 'error');
+        }, 500);
+      } catch (error) {
+        log('❌ ERROR calling open(): ' + error.message, 'error');
+        log('Stack: ' + error.stack, 'error');
+      }
+    }
+    
+    // Auto-check after load
+    window.addEventListener('load', () => {
+      log('Page loaded', 'success');
+      
+      setTimeout(() => {
+        log('Checking if widget loaded after 2 seconds...', 'info');
+        
+        if (typeof window.FindYourWordWidget !== 'undefined') {
+          log('✅ Widget global exists!', 'success');
+          log('Widget object: ' + JSON.stringify(Object.keys(window.FindYourWordWidget)), 'info');
+        } else {
+          log('❌ Widget global NOT found after load', 'error');
+          log('window object keys: ' + Object.keys(window).filter(k => k.includes('Find')).join(', '), 'info');
+        }
+      }, 2000);
+    });
+    
+    // Catch all errors
+    window.onerror = function(msg, url, line, col, error) {
+      log('❌ GLOBAL ERROR: ' + msg, 'error');
+      log('   at ' + url + ':' + line + ':' + col, 'error');
+      if (error && error.stack) {
+        log('   Stack: ' + error.stack, 'error');
+      }
+      return false;
+    };
+  </script>
+  
+  <!-- Load widget CSS -->
+  <link rel="stylesheet" href="https://fyw-lrqe8.ondigitalocean.app/widget/v2/style.css">
+  
+  <!-- Load widget JS -->
+  <script src="https://fyw-lrqe8.ondigitalocean.app/widget/v2/find-your-word-v2.iife.js" defer></script>
+  
+</body>
+</html>
+
