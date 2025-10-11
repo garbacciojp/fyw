@@ -96,7 +96,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
 
       {/* Content (carousel) */}
       <div className="fyw-flex-1 fyw-flex fyw-items-center fyw-py-8 md:fyw-py-12">
-        <Carousel showGradient={true} className="fyw-w-full fyw-px-6 md:fyw-px-8">
+        <Carousel className="fyw-w-full fyw-px-6 md:fyw-px-8">
           {words.map((word, index) => (
             <div
               key={index}
@@ -126,10 +126,10 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
                 </h3>
               </div>
 
-              {/* Pronunciation, origin, type - fixed position */}
-              <div className="fyw-flex-shrink-0 fyw-flex fyw-items-center fyw-justify-center fyw-gap-3 fyw-text-sm fyw-text-fyw-gray-400 fyw-mb-6">
+              {/* Pronunciation, origin, type - stacked on mobile, inline on desktop */}
+              <div className="fyw-flex-shrink-0 fyw-flex fyw-flex-col md:fyw-flex-row fyw-items-center fyw-justify-center fyw-gap-1 md:fyw-gap-3 fyw-text-sm fyw-text-fyw-gray-400 fyw-mb-6">
                 <span className="fyw-italic">{word.pronunciation}</span>
-                <span>•</span>
+                <span className="fyw-hidden md:fyw-inline">•</span>
                 <span>
                   {word.origin} • {word.type}
                 </span>

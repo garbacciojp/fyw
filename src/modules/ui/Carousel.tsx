@@ -13,7 +13,6 @@ interface CarouselProps {
   children: ReactNode[];
   className?: string;
   cardClassName?: string;
-  showGradient?: boolean;
 }
 
 /**
@@ -23,7 +22,6 @@ export const Carousel: React.FC<CarouselProps> = ({
   children,
   className,
   cardClassName,
-  showGradient = true,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -151,17 +149,9 @@ export const Carousel: React.FC<CarouselProps> = ({
         ))}
       </div>
 
-      {/* Right gradient fade effect */}
-      {showGradient && (
-        <div
-          className="fyw-absolute fyw-top-0 fyw-right-0 fyw-bottom-0 fyw-w-24 fyw-pointer-events-none"
-          style={{
-            background: 'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)',
-          }}
-        />
-      )}
+      {/* Right gradient fade effect - Removed (doesn't work on iPhone) */}
 
-      {/* Pagination dots */}
+      {/* Pagination dots - Perfect circles */}
       <div className="fyw-flex fyw-justify-center fyw-gap-2 fyw-mt-6">
         {children.map((_, index) => (
           <button
@@ -177,10 +167,10 @@ export const Carousel: React.FC<CarouselProps> = ({
               }
             }}
             className={cn(
-              'fyw-w-2 fyw-h-2 fyw-rounded-full fyw-transition-all fyw-duration-200',
+              'fyw-rounded-full fyw-transition-all fyw-duration-200',
               currentIndex === index
-                ? 'fyw-bg-fyw-white fyw-w-6'
-                : 'fyw-bg-fyw-gray-600 hover:fyw-bg-fyw-gray-400'
+                ? 'fyw-w-3 fyw-h-3 fyw-bg-fyw-white' // Active: larger circle
+                : 'fyw-w-2 fyw-h-2 fyw-bg-fyw-gray-600 hover:fyw-bg-fyw-gray-400' // Inactive: smaller circle
             )}
             aria-label={`Go to slide ${index + 1}`}
           />
