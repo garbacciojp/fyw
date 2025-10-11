@@ -31,10 +31,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         inlineDynamicImports: true,
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-        },
+        // Don't externalize React - bundle it in the widget
+        // This makes the widget self-contained and work anywhere
       },
     },
     sourcemap: true,
