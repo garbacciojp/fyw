@@ -46,12 +46,11 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
     }
   };
 
-  // Copy single word to clipboard
+  // Copy single word to clipboard (ONLY the word, nothing else)
   const handleCopySingleWord = async (word: WordSuggestion, index: number) => {
-    const formattedWord = `${word.word}\n${word.pronunciation} • ${word.origin}\n\n${word.description}`;
-    
     try {
-      await navigator.clipboard.writeText(formattedWord);
+      // Only copy the word itself from word.word field
+      await navigator.clipboard.writeText(word.word);
       setCopiedWordIndex(index);
       setTimeout(() => setCopiedWordIndex(null), 2000); // Reset after 2 seconds
     } catch (err) {
