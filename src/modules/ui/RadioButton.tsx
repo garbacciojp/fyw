@@ -56,6 +56,9 @@ export const RadioButton: React.FC<RadioButtonProps> = ({
         // Disabled state
         disabled && 'fyw-opacity-50 fyw-cursor-not-allowed'
       )}
+      style={{
+        textTransform: 'none',
+      }}
     >
       {/* Hidden native radio - no interaction */}
       <input

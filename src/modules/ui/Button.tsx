@@ -66,6 +66,10 @@ export const Button: React.FC<ButtonProps> = ({
     <button
       className={cn(baseClasses, variantClasses[variant], sizeClasses[size], className)}
       disabled={disabled || isLoading}
+      style={{
+        textTransform: 'none',
+        ...props.style,
+      }}
       {...props}
     >
       {isLoading && <LoadingSpinner size="sm" />}

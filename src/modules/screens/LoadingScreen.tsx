@@ -34,31 +34,18 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
         className
       )}
     >
-      {/* Animated loader */}
+      {/* Animated loader - Simple bouncing dots */}
       <div className="fyw-mb-12">
-        <div className="fyw-relative fyw-w-20 fyw-h-20 fyw-mx-auto">
-          {/* Orbiting dots */}
+        <div className="fyw-flex fyw-items-center fyw-justify-center fyw-gap-2">
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="fyw-absolute fyw-w-2 fyw-h-2 fyw-bg-fyw-white fyw-rounded-full"
+              className="fyw-w-3 fyw-h-3 fyw-bg-fyw-white fyw-rounded-full"
               style={{
-                animation: `fyw-orbit 2s linear infinite ${i * 0.2}s`,
-                top: '50%',
-                left: '50%',
-                transformOrigin: '0 40px',
+                animation: `fyw-bounce 1.4s ease-in-out ${i * 0.16}s infinite`,
               }}
             />
           ))}
-
-          {/* Center pulse */}
-          <div
-            className="fyw-absolute fyw-w-1 fyw-h-1 fyw-bg-fyw-gray-400 fyw-rounded-full fyw-top-1/2 fyw-left-1/2"
-            style={{
-              transform: 'translate(-50%, -50%)',
-              animation: 'fyw-centerPulse 2s ease-in-out infinite',
-            }}
-          />
         </div>
       </div>
 
@@ -68,16 +55,16 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
       </h2>
       <p className="fyw-text-fyw-gray-400 fyw-max-w-md">{message}</p>
 
-      {/* Additional loading animation */}
+      {/* Loading animation styles */}
       <style>{`
-        @keyframes fyw-centerPulse {
-          0%, 100% {
-            opacity: 0.3;
-            transform: translate(-50%, -50%) scale(1);
+        @keyframes fyw-bounce {
+          0%, 80%, 100% {
+            transform: translateY(0);
+            opacity: 1;
           }
-          50% {
-            opacity: 0.8;
-            transform: translate(-50%, -50%) scale(1.5);
+          40% {
+            transform: translateY(-12px);
+            opacity: 0.7;
           }
         }
       `}</style>

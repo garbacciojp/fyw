@@ -57,6 +57,9 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         disabled && 'fyw-opacity-50 fyw-cursor-not-allowed',
         className
       )}
+      style={{
+        textTransform: 'none',
+      }}
     >
       {/* Hidden native checkbox - no interaction */}
       <input
