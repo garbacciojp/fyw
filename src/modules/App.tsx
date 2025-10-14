@@ -15,7 +15,7 @@ import { openaiService } from '@/core/services';
 import { AppShell, AppHeader, AppContent } from './layout';
 import { WelcomeScreen, QuestionScreen, LoadingScreen, ResultsScreen } from './screens';
 import { DebugPanel } from './debug';
-import { APP_SCREENS, getQuestionImage, DEFAULT_IMAGE, UI_CONFIG } from '@/config';
+import { APP_SCREENS, getQuestionImage, getLoadingImage, getResultsImage, DEFAULT_IMAGE, UI_CONFIG } from '@/config';
 
 /**
  * Main application component
@@ -101,6 +101,17 @@ export const App: React.FC = () => {
       const questionNumber = questionFlow.currentQuestion.getQuestionNumber(flowType);
       return getQuestionImage(questionNumber);
     }
+    
+    // Loading screen shows the last question image based on flow type
+    if (screen === APP_SCREENS.LOADING) {
+      return getLoadingImage(flowType);
+    }
+    
+    // Results screen shows the last question image based on flow type
+    if (screen === APP_SCREENS.RESULTS) {
+      return getResultsImage(flowType);
+    }
+    
     return DEFAULT_IMAGE;
   };
 
