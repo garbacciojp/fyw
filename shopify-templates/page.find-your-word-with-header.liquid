@@ -1,0 +1,275 @@
+{% comment %}
+  Template: page.find-your-word
+  Description: Auto-opens Find Your Word widget on page load
+  Feature: Respects site header (widget appears below header)
+  Created: October 11, 2025
+{% endcomment %}
+
+<div class="page-width page-find-your-word">
+  
+  {%- comment -%}
+    Page Header (optional - remove if you don't want it)
+  {%- endcomment -%}
+  {% if page.title != blank %}
+    <header class="section-header text-center">
+      <h1 class="section-header__title h1">{{ page.title }}</h1>
+    </header>
+  {% endif %}
+
+  {%- comment -%}
+    Page Content (optional - displays while widget loads)
+  {%- endcomment -%}
+  {% if page.content != blank %}
+    <div class="rte rte--nomargin">
+      {{ page.content }}
+    </div>
+  {% endif %}
+
+  {%- comment -%}
+    Loading Indicator - Shows while widget is loading
+  {%- endcomment -%}
+  <div id="fyw-loading-indicator" class="fyw-loading-wrapper">
+    <div class="fyw-loading-content">
+      <div class="fyw-spinner"></div>
+      <p class="fyw-loading-text">Loading Find Your Word...</p>
+      <p class="fyw-loading-subtext">Preparing your personalized experience</p>
+    </div>
+  </div>
+
+</div>
+
+{%- comment -%}
+  Styles for Loading Indicator
+{%- endcomment -%}
+<style>
+  .page-find-your-word {
+    padding: 60px 20px;
+  }
+
+  .fyw-loading-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    padding: 40px 20px;
+  }
+
+  .fyw-loading-content {
+    text-align: center;
+    max-width: 400px;
+  }
+
+  .fyw-spinner {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #000;
+    border-radius: 50%;
+    animation: fyw-spin 1s linear infinite;
+    margin-bottom: 24px;
+  }
+
+  @keyframes fyw-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .fyw-loading-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+    margin: 0 0 8px 0;
+  }
+
+  .fyw-loading-subtext {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+  }
+
+  /* Hide loading indicator when widget opens */
+  .fyw-loading-hidden {
+    display: none !important;
+  }
+
+  /* Widget adjustment to respect header */
+  body.fyw-widget-open #fyw-widget-root {
+    /* Calculate header height and adjust widget position */
+    top: var(--fyw-header-height, 0) !important;
+    height: calc(100vh - var(--fyw-header-height, 0)) !important;
+    /* For mobile browsers with dynamic viewport */
+    height: calc(100dvh - var(--fyw-header-height, 0)) !important;
+  }
+</style>
+
+{%- comment -%}
+  Load Find Your Word Widget
+{%- endcomment -%}
+<link rel="stylesheet" href="https://fyw-lrqe8.ondigitalocean.app/widget/v2/style.css">
+<script src="https://fyw-lrqe8.ondigitalocean.app/widget/v2/find-your-word-v2.iife.js" defer></script>
+
+{%- comment -%}
+  Auto-Open Widget on Page Load with Header Support
+{%- endcomment -%}
+<script>
+  (function() {
+    'use strict';
+    
+    // Configuration
+    const MAX_WAIT_TIME = 10000; // 10 seconds max wait
+    const CHECK_INTERVAL = 100; // Check every 100ms
+    let attempts = 0;
+    const maxAttempts = MAX_WAIT_TIME / CHECK_INTERVAL;
+
+    /**
+     * Calculate and set header height as CSS variable
+     */
+    function calculateHeaderHeight() {
+      // Common Shopify header selectors
+      const headerSelectors = [
+        'header.site-header',
+        'header.header',
+        '.header-wrapper',
+        '#shopify-section-header',
+        'header[role="banner"]',
+        '.site-header',
+        'header'
+      ];
+
+      let header = null;
+      
+      // Try each selector until we find the header
+      for (const selector of headerSelectors) {
+        header = document.querySelector(selector);
+        if (header && header.offsetHeight > 0) {
+          break;
+        }
+      }
+
+      if (header) {
+        const headerHeight = header.offsetHeight;
+        console.log('✅ Detected header height:', headerHeight + 'px');
+        
+        // Set CSS variable for header height
+        document.documentElement.style.setProperty('--fyw-header-height', headerHeight + 'px');
+        
+        return headerHeight;
+      } else {
+        console.log('⚠️ No header detected, using full viewport');
+        document.documentElement.style.setProperty('--fyw-header-height', '0px');
+        return 0;
+      }
+    }
+
+    /**
+     * Try to open the widget
+     */
+    function attemptOpen() {
+      attempts++;
+
+      // Check if widget is available
+      if (window.FindYourWordWidget && typeof window.FindYourWordWidget.open === 'function') {
+        try {
+          // Calculate header height before opening
+          const headerHeight = calculateHeaderHeight();
+
+          // Hide loading indicator
+          const loadingIndicator = document.getElementById('fyw-loading-indicator');
+          if (loadingIndicator) {
+            loadingIndicator.classList.add('fyw-loading-hidden');
+          }
+
+          // Add body class to enable header-aware styles
+          document.body.classList.add('fyw-widget-open');
+
+          // Open the widget
+          window.FindYourWordWidget.open();
+
+          // Log success
+          console.log('✅ Find Your Word widget opened successfully');
+          if (headerHeight > 0) {
+            console.log('   Widget positioned below header (' + headerHeight + 'px offset)');
+          }
+
+          // Listen for widget close to remove body class
+          // Check periodically if widget is closed
+          const checkInterval = setInterval(() => {
+            const widgetRoot = document.getElementById('fyw-widget-root');
+            if (!widgetRoot) {
+              document.body.classList.remove('fyw-widget-open');
+              clearInterval(checkInterval);
+            }
+          }, 500);
+
+          return true;
+        } catch (error) {
+          console.error('❌ Error opening widget:', error);
+          showError('Failed to open widget. Please refresh the page.');
+          return false;
+        }
+      }
+
+      // Widget not ready yet
+      if (attempts >= maxAttempts) {
+        // Timeout - widget didn't load
+        console.error('❌ Widget failed to load within timeout period');
+        showError('Widget failed to load. Please refresh the page or contact support.');
+        return false;
+      }
+
+      // Try again
+      setTimeout(attemptOpen, CHECK_INTERVAL);
+    }
+
+    /**
+     * Show error message
+     */
+    function showError(message) {
+      const loadingIndicator = document.getElementById('fyw-loading-indicator');
+      if (loadingIndicator) {
+        loadingIndicator.innerHTML = `
+          <div class="fyw-loading-content">
+            <p style="color: #dc3545; font-weight: 600; margin-bottom: 12px;">⚠️ Error</p>
+            <p style="color: #666;">${message}</p>
+            <button 
+              onclick="location.reload()" 
+              style="margin-top: 20px; padding: 12px 24px; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;"
+            >
+              Reload Page
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    /**
+     * Initialize when DOM is ready
+     */
+    function initialize() {
+      console.log('🚀 Initializing Find Your Word page with header support...');
+      attemptOpen();
+    }
+
+    // Start initialization
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initialize);
+    } else {
+      initialize();
+    }
+
+    // Recalculate header height on resize (for mobile orientation changes)
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        const widgetRoot = document.getElementById('fyw-widget-root');
+        if (widgetRoot) {
+          calculateHeaderHeight();
+          console.log('📐 Header height recalculated on resize');
+        }
+      }, 250);
+    });
+  })();
+</script>
+

@@ -2,15 +2,27 @@
  * Express server for Digital Ocean App Platform
  * 1. Serves the built widget files with proper CORS headers for Shopify embedding
  * 2. Proxies OpenAI API requests (keeps API key secure on server)
+ * 3. Implements API key rotation with automatic failover
  */
 
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import { apiKeyRotator } from './server-services/api-key-rotator.service.js';
+import { validateAPIKeyConfig, RETRY_CONFIG } from './server-config/api-keys.config.js';
 
 // Load environment variables
 dotenv.config();
+
+// Validate API key configuration on startup
+const configValidation = validateAPIKeyConfig();
+if (!configValidation.valid) {
+  console.error('❌ API Key configuration errors:');
+  configValidation.errors.forEach(error => console.error(`  - ${error}`));
+  process.exit(1);
+}
+console.log(`✅ API Key configuration valid (${configValidation.keyCount} key(s) configured)`);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -79,9 +91,14 @@ app.use(express.static(path.join(__dirname, 'dist')));
 // ============================================================================
 
 /**
- * API Proxy Endpoint for OpenAI
- * Proxies requests to OpenAI API to keep API key secure on server
+ * API Proxy Endpoint for OpenAI with Automatic Key Rotation
+ * Proxies requests to OpenAI API with intelligent retry logic
  * POST /api/suggest-words
+ * 
+ * Features:
+ * - Automatic failover to backup API keys on failure
+ * - Configurable retry attempts and timeout
+ * - Smart error detection and retry logic
  */
 app.post('/api/suggest-words', async (req, res) => {
   try {
@@ -94,73 +111,98 @@ app.post('/api/suggest-words', async (req, res) => {
       });
     }
 
-    // Check API key is configured
-    const apiKey = process.env.OPENAI_API_KEY;
-    const promptId = process.env.OPENAI_PROMPT_ID;
-
-    if (!apiKey) {
-      console.error('❌ OPENAI_API_KEY not configured');
-      return res.status(500).json({ 
-        error: 'Server configuration error: API key not set' 
-      });
-    }
-
-    if (!promptId) {
-      console.error('❌ OPENAI_PROMPT_ID not configured');
-      return res.status(500).json({ 
-        error: 'Server configuration error: Prompt ID not set' 
-      });
-    }
-
     console.log('📝 Received request for word suggestions');
     console.log('📊 User data:', JSON.stringify(userData, null, 2));
 
-    // Prepare OpenAI API request
-    const openaiPayload = {
-      prompt: {
-        id: promptId,
-        version: '1'
-      },
-      input: [{ 
-        role: 'user', 
-        content: JSON.stringify(userData)
-      }]
+    /**
+     * API call function that will be retried with different keys
+     * @param {string} apiKey - The OpenAI API key to use
+     * @returns {Promise<Object>} OpenAI API response
+     */
+    const makeOpenAIRequest = async (apiKey) => {
+      // Get the prompt ID (same for all keys)
+      const promptId = apiKeyRotator.getPromptId();
+      
+      // Prepare OpenAI API request
+      const openaiPayload = {
+        prompt: {
+          id: promptId,
+          version: '1'
+        },
+        input: [{ 
+          role: 'user', 
+          content: JSON.stringify(userData)
+        }]
+      };
+
+      // Create abort controller for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(
+        () => controller.abort(), 
+        RETRY_CONFIG.REQUEST_TIMEOUT_MS
+      );
+
+      try {
+        // Make request to OpenAI
+        const openaiResponse = await fetch('https://api.openai.com/v1/responses', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(openaiPayload),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        // Handle non-OK responses
+        if (!openaiResponse.ok) {
+          const errorText = await openaiResponse.text().catch(() => 'Unknown error');
+          
+          const error = new Error(`OpenAI API error: ${errorText}`);
+          error.status = openaiResponse.status;
+          error.response = {
+            status: openaiResponse.status,
+            statusText: openaiResponse.statusText
+          };
+          
+          throw error;
+        }
+
+        const openaiData = await openaiResponse.json();
+        return openaiData;
+
+      } catch (error) {
+        clearTimeout(timeoutId);
+        
+        // Handle timeout errors
+        if (error.name === 'AbortError') {
+          const timeoutError = new Error(`Request timed out after ${RETRY_CONFIG.REQUEST_TIMEOUT_MS}ms`);
+          timeoutError.name = 'TimeoutError';
+          timeoutError.status = 408;
+          throw timeoutError;
+        }
+        
+        throw error;
+      }
     };
 
-    console.log('🚀 Sending request to OpenAI...');
-
-    // Make request to OpenAI
-    const openaiResponse = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(openaiPayload)
-    });
-
-    if (!openaiResponse.ok) {
-      const errorText = await openaiResponse.text().catch(() => 'Unknown error');
-      console.error('❌ OpenAI API error:', {
-        status: openaiResponse.status,
-        statusText: openaiResponse.statusText,
-        error: errorText
-      });
-      
-      return res.status(openaiResponse.status).json({ 
-        error: `OpenAI API error: ${errorText}` 
-      });
-    }
-
-    const openaiData = await openaiResponse.json();
-    console.log('✅ Received response from OpenAI');
-
+    // Execute with automatic retry and key rotation
+    const result = await apiKeyRotator.executeWithRetry(makeOpenAIRequest);
+    
+    console.log('✅ Successfully received response from OpenAI');
+    
     // Return OpenAI response to client
-    res.json(openaiData);
+    res.json(result);
 
   } catch (error) {
     console.error('❌ Error in API proxy:', error);
-    res.status(500).json({ 
+    
+    // Determine appropriate status code
+    const statusCode = error?.status || error?.response?.status || 500;
+    
+    res.status(statusCode).json({ 
       error: error instanceof Error ? error.message : 'Internal server error' 
     });
   }
@@ -168,11 +210,41 @@ app.post('/api/suggest-words', async (req, res) => {
 
 // Health check endpoint
 app.get('/health', (req, res) => {
+  const keyHealth = apiKeyRotator.getHealthStatus();
+  
   res.json({ 
     status: 'healthy', 
     service: 'find-your-word-widget',
     version: '2.0.0',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    apiKeys: {
+      total: keyHealth.length,
+      health: keyHealth.map(key => ({
+        label: key.label,
+        status: key.failures === 0 ? 'healthy' : 'degraded',
+        failures: key.failures,
+        lastFailure: key.lastFailure ? new Date(key.lastFailure).toISOString() : null
+      }))
+    }
+  });
+});
+
+// API Key health endpoint (detailed diagnostics)
+app.get('/api/health/keys', (req, res) => {
+  const keyHealth = apiKeyRotator.getHealthStatus();
+  const currentKey = apiKeyRotator.getCurrentKey();
+  
+  res.json({
+    current: {
+      label: currentKey.label,
+      inUse: true
+    },
+    keys: keyHealth,
+    config: {
+      maxRetries: RETRY_CONFIG.MAX_TOTAL_ATTEMPTS,
+      timeoutMs: RETRY_CONFIG.REQUEST_TIMEOUT_MS,
+      retryDelayMs: RETRY_CONFIG.RETRY_DELAY_MS
+    }
   });
 });
 
