@@ -1,12 +1,12 @@
 /**
  * Carousel Component
- * Simple carousel with arrow navigation
+ * Simple swipeable carousel - full width cards
  * 
- * Single Responsibility: Render navigable carousel
+ * Single Responsibility: Render swipeable carousel
  * Props: 3 (under the 7-prop limit)
  */
 
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useRef, useEffect, type ReactNode } from 'react';
 import { cn } from '@/core';
 
 interface CarouselProps {
@@ -16,7 +16,7 @@ interface CarouselProps {
 }
 
 /**
- * Simple carousel with arrow navigation
+ * Simple swipeable carousel component
  */
 export const Carousel: React.FC<CarouselProps> = ({
   children,
@@ -24,7 +24,12 @@ export const Carousel: React.FC<CarouselProps> = ({
   cardClassName,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
   const totalCards = children.length;
+  const minSwipeDistance = 50; // Minimum swipe distance to trigger
 
   // Navigation functions
   const goToNext = () => {
@@ -37,6 +42,30 @@ export const Carousel: React.FC<CarouselProps> = ({
 
   const goToIndex = (index: number) => {
     setCurrentIndex(index);
+  };
+
+  // Touch handlers
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(0); // Reset
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      goToNext();
+    } else if (isRightSwipe) {
+      goToPrevious();
+    }
   };
 
   // Keyboard navigation
@@ -57,16 +86,26 @@ export const Carousel: React.FC<CarouselProps> = ({
 
   return (
     <div className={cn('fyw-relative fyw-w-full', className)}>
-      {/* Cards container */}
-      <div className="fyw-relative fyw-w-full fyw-overflow-hidden">
-        {/* Card display */}
-        <div className="fyw-w-full">
+      {/* Cards container - full width with touch support */}
+      <div 
+        ref={containerRef}
+        className="fyw-relative fyw-w-full fyw-overflow-hidden fyw-touch-pan-y"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        {/* Card display with slide animation */}
+        <div 
+          className="fyw-flex fyw-transition-transform fyw-duration-300 fyw-ease-out"
+          style={{
+            transform: `translateX(-${currentIndex * 100}%)`,
+          }}
+        >
           {children.map((child, index) => (
             <div
               key={index}
               className={cn(
-                'fyw-w-full fyw-transition-opacity fyw-duration-300',
-                index === currentIndex ? 'fyw-block' : 'fyw-hidden',
+                'fyw-w-full fyw-flex-shrink-0',
                 cardClassName
               )}
             >
@@ -74,86 +113,78 @@ export const Carousel: React.FC<CarouselProps> = ({
             </div>
           ))}
         </div>
-
-        {/* Navigation Arrows */}
-        {/* Left Arrow */}
-        {currentIndex > 0 && (
-          <button
-            onClick={goToPrevious}
-            className={cn(
-              'fyw-absolute fyw-left-4 fyw-top-1/2 fyw--translate-y-1/2',
-              'fyw-w-12 fyw-h-12 fyw-rounded-full',
-              'fyw-bg-fyw-white fyw-shadow-lg',
-              'fyw-flex fyw-items-center fyw-justify-center',
-              'fyw-transition-all fyw-duration-200',
-              'hover:fyw-scale-110 hover:fyw-shadow-xl',
-              'active:fyw-scale-95',
-              'fyw-z-10'
-            )}
-            aria-label="Previous word"
-          >
-            <svg
-              className="fyw-w-6 fyw-h-6 fyw-text-fyw-black"
-              fill="none"
-              strokeWidth="2.5"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-            </svg>
-          </button>
-        )}
-
-        {/* Right Arrow */}
-        {currentIndex < totalCards - 1 && (
-          <button
-            onClick={goToNext}
-            className={cn(
-              'fyw-absolute fyw-right-4 fyw-top-1/2 fyw--translate-y-1/2',
-              'fyw-w-12 fyw-h-12 fyw-rounded-full',
-              'fyw-bg-fyw-white fyw-shadow-lg',
-              'fyw-flex fyw-items-center fyw-justify-center',
-              'fyw-transition-all fyw-duration-200',
-              'hover:fyw-scale-110 hover:fyw-shadow-xl',
-              'active:fyw-scale-95',
-              'fyw-z-10'
-            )}
-            aria-label="Next word"
-          >
-            <svg
-              className="fyw-w-6 fyw-h-6 fyw-text-fyw-black"
-              fill="none"
-              strokeWidth="2.5"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-            </svg>
-          </button>
-        )}
       </div>
 
-      {/* Pagination dots - Perfect circles with proper sizing */}
-      <div className="fyw-flex fyw-justify-center fyw-items-center fyw-gap-3 fyw-mt-8">
-        {children.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToIndex(index)}
-            className={cn(
-              // Base styles - enforce perfect circle
-              'fyw-rounded-full fyw-transition-all fyw-duration-300 fyw-flex-shrink-0',
-              'fyw-border-0 fyw-p-0 fyw-cursor-pointer',
-              // Active state: larger white circle with subtle shadow
-              currentIndex === index
-                ? 'fyw-w-3 fyw-h-3 fyw-min-w-[12px] fyw-min-h-[12px] fyw-bg-fyw-white fyw-shadow-sm'
-                : 'fyw-w-2 fyw-h-2 fyw-min-w-[8px] fyw-min-h-[8px] fyw-bg-fyw-gray-600 hover:fyw-bg-fyw-gray-400 hover:fyw-scale-110'
-            )}
-            style={{
-              aspectRatio: '1 / 1', // Force perfect circle
-            }}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
+      {/* Pagination dots - Perfect circles with robust inline styles */}
+      <div 
+        className="fyw-flex fyw-justify-center fyw-items-center fyw-mt-8"
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '12px',
+          marginTop: '32px',
+        }}
+      >
+        {children.map((_, index) => {
+          const isActive = currentIndex === index;
+          return (
+            <button
+              key={index}
+              onClick={() => goToIndex(index)}
+              className="fyw-carousel-dot"
+              style={{
+                // Force exact dimensions with inline styles (override any site CSS)
+                width: isActive ? '12px' : '8px',
+                height: isActive ? '12px' : '8px',
+                minWidth: isActive ? '12px' : '8px',
+                minHeight: isActive ? '12px' : '8px',
+                maxWidth: isActive ? '12px' : '8px',
+                maxHeight: isActive ? '12px' : '8px',
+                
+                // Force perfect circle
+                borderRadius: '50%',
+                aspectRatio: '1 / 1',
+                
+                // Colors and appearance
+                backgroundColor: isActive ? '#ffffff' : '#4b5563',
+                border: 'none',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                
+                // Remove any button defaults
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                MozAppearance: 'none',
+                
+                // Interaction
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                
+                // Shadow for active
+                boxShadow: isActive ? '0 1px 2px 0 rgba(0, 0, 0, 0.05)' : 'none',
+                
+                // Prevent any flexbox stretching
+                flexShrink: 0,
+                flexGrow: 0,
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  (e.target as HTMLButtonElement).style.backgroundColor = '#9ca3af';
+                  (e.target as HTMLButtonElement).style.transform = 'scale(1.1)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  (e.target as HTMLButtonElement).style.backgroundColor = '#4b5563';
+                  (e.target as HTMLButtonElement).style.transform = 'scale(1)';
+                }
+              }}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          );
+        })}
       </div>
     </div>
   );

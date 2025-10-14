@@ -189,12 +189,13 @@ export const QUESTIONS: QuestionConfig[] = [
     getTotalQuestions: (flow: FlowType) => (flow === FLOW_TYPES.THEIRS ? 10 : 8),
     getTitle: () => 'What kind of meaning do you want the word to have?',
     getSubtitle: () => 'Choose one that best matches what you want.',
+    buttonLayout: 'single-column' as const,
     options: [
-      { value: 'Experience / concept', label: 'Experience / Concept' },
-      { value: 'Mood / feeling', label: 'Mood / Feeling' },
-      { value: 'Mysterious / Unique', label: 'Mysterious / Unique' },
-      { value: 'Personal trait', label: 'Personal trait' },
-      { value: 'Value / ideal', label: 'Value / Ideal' },
+      { value: 'Experience / concept', label: 'A word that inspires you' },
+      { value: 'Mood / feeling', label: 'A word that expresses you' },
+      { value: 'Mysterious / Unique', label: 'A word that is mysterious' },
+      { value: 'Personal trait', label: "A word that's personal" },
+      { value: 'Value / ideal', label: 'A word that reflects your values' },
     ],
   },
 
@@ -240,9 +241,9 @@ export const QUESTIONS: QuestionConfig[] = [
     getTitle: () => 'Do you prefer a word that is:',
     getSubtitle: () => 'Choose the style that appeals to you most',
     options: [
-      { value: 'common', label: 'Common / Recognisable' },
-      { value: 'poetic', label: 'Poetic / Symbolic' },
-      { value: 'rare', label: 'Rare / Uncommon' },
+      { value: 'common', label: 'Recognisable' },
+      { value: 'poetic', label: 'Symbolic' },
+      { value: 'rare', label: 'Rare' },
     ],
   },
 

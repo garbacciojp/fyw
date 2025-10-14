@@ -69,11 +69,16 @@ export const AppShell: React.FC<AppShellProps> = ({
               }}
             />
             
-            {/* PRYA Branding Overlay - Desktop only */}
+            {/* PRYA Logo Overlay - Desktop only */}
             <div className="fyw-absolute fyw-bottom-6 fyw-left-1/2 fyw-transform fyw--translate-x-1/2">
-              <h2 className="fyw-text-white fyw-font-sans fyw-text-xl fyw-font-medium fyw-tracking-wide fyw-drop-shadow-lg">
-                PRYA
-              </h2>
+              <img 
+                src={`${import.meta.env.PROD ? 'https://fyw-lrqe8.ondigitalocean.app/widget/v2' : ''}/images/prya-logo.png`}
+                alt="PRYA"
+                className="fyw-h-8 fyw-w-auto fyw-drop-shadow-lg"
+                style={{
+                  filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
+                }}
+              />
             </div>
             
             {/* Debug Panel Overlay - Desktop only */}

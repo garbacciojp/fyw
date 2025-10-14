@@ -176,11 +176,14 @@ export const App: React.FC = () => {
       showVideo={true}
       imageSrc={getCurrentImage()}
       debugPanel={
-        <DebugPanel
-          formData={formData}
-          isVisible={showDebugPanel}
-          onToggle={() => setShowDebugPanel(!showDebugPanel)}
-        />
+        // Only render debug panel in development mode
+        !import.meta.env.PROD ? (
+          <DebugPanel
+            formData={formData}
+            isVisible={showDebugPanel}
+            onToggle={() => setShowDebugPanel(!showDebugPanel)}
+          />
+        ) : undefined
       }
     >
       {screen === APP_SCREENS.WELCOME ? (

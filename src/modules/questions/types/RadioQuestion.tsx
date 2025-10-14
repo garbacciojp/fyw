@@ -12,6 +12,7 @@ import type { QuestionComponentProps } from '../QuestionRegistry';
 
 interface RadioQuestionProps extends QuestionComponentProps {
   options?: QuestionOption[];
+  buttonLayout?: 'single-column' | 'two-columns';
 }
 
 /**
@@ -23,6 +24,7 @@ export const RadioQuestion: React.FC<RadioQuestionProps> = ({
   onComplete,
   options = [],
   error,
+  buttonLayout = 'two-columns',
 }) => {
   const selectedValue = value as string;
 
@@ -34,10 +36,15 @@ export const RadioQuestion: React.FC<RadioQuestionProps> = ({
     }
   };
 
+  // Determine grid classes based on layout
+  const gridClasses = buttonLayout === 'single-column'
+    ? 'fyw-grid fyw-grid-cols-1 fyw-gap-4'
+    : 'fyw-grid fyw-grid-cols-1 md:fyw-grid-cols-2 fyw-gap-4';
+
   return (
     <div className="fyw-space-y-3">
       {/* Radio buttons in a neat grid layout */}
-      <div className="fyw-grid fyw-grid-cols-1 md:fyw-grid-cols-2 fyw-gap-4">
+      <div className={gridClasses}>
         {options.map((option) => (
           <RadioButton
             key={option.value}

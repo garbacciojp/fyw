@@ -53,6 +53,7 @@ export interface QuestionConfig {
   maxSelections?: number;
   allowCustom?: boolean;
   placeholder?: string;
+  buttonLayout?: 'single-column' | 'two-columns';
 }
 
 /**
