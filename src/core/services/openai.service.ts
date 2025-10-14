@@ -68,11 +68,12 @@ class OpenAIService {
 
   /**
    * Process OpenAI API response
+   * Handles multiple response formats from different model versions
    */
   private processResponse(response: OpenAIResponse): JewelryNameSuggestion {
     let responseText = '';
 
-    // Extract response text from API response structure
+    // Format 1: Stored Prompts API (newer format)
     if (response.output && Array.isArray(response.output) && response.output[0]) {
       const outputMessage = response.output[0];
       if (outputMessage.content && Array.isArray(outputMessage.content) && outputMessage.content[0]) {
@@ -80,13 +81,29 @@ class OpenAIService {
       }
     }
 
-    // Fallback to legacy field
+    // Format 2: Legacy stored prompts format
     if (!responseText && response.output_text) {
       responseText = response.output_text;
     }
 
+    // Format 3: Chat completions format (if using different model)
+    if (!responseText && (response as any).choices && Array.isArray((response as any).choices)) {
+      const choice = (response as any).choices[0];
+      if (choice?.message?.content) {
+        responseText = choice.message.content;
+      } else if (choice?.text) {
+        responseText = choice.text;
+      }
+    }
+
+    // Format 4: Direct text response
+    if (!responseText && (response as any).text) {
+      responseText = (response as any).text;
+    }
+
     if (!responseText) {
-      throw new Error('Could not extract response from API');
+      console.error('❌ Could not extract response. Available fields:', Object.keys(response));
+      throw new Error('Could not extract response from API - unknown format');
     }
 
     console.log('✅ Received response from OpenAI');
