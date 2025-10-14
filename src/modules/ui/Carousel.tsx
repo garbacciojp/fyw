@@ -1,9 +1,15 @@
 /**
  * Carousel Component
- * Simple swipeable carousel - full width cards
+ * Simple swipeable/draggable carousel - full width cards
  * 
- * Single Responsibility: Render swipeable carousel
+ * Single Responsibility: Render swipeable carousel with touch and mouse support
  * Props: 3 (under the 7-prop limit)
+ * 
+ * Features:
+ * - Touch swipe (mobile)
+ * - Mouse drag (desktop)
+ * - Keyboard navigation (arrow keys)
+ * - Click-to-navigate dots
  */
 
 import { useState, useRef, useEffect, type ReactNode } from 'react';
@@ -26,10 +32,13 @@ export const Carousel: React.FC<CarouselProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState(0);
+  const [dragEnd, setDragEnd] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   
   const totalCards = children.length;
-  const minSwipeDistance = 50; // Minimum swipe distance to trigger
+  const minSwipeDistance = 50; // Minimum swipe/drag distance to trigger
 
   // Navigation functions
   const goToNext = () => {
@@ -44,7 +53,7 @@ export const Carousel: React.FC<CarouselProps> = ({
     setCurrentIndex(index);
   };
 
-  // Touch handlers
+  // Touch handlers (Mobile)
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(0); // Reset
     setTouchStart(e.targetTouches[0].clientX);
@@ -68,6 +77,47 @@ export const Carousel: React.FC<CarouselProps> = ({
     }
   };
 
+  // Mouse handlers (Desktop)
+  const onMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragEnd(0); // Reset
+    setDragStart(e.clientX);
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    setDragEnd(e.clientX);
+  };
+
+  const onMouseUp = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    
+    if (!dragStart || !dragEnd) return;
+    
+    const distance = dragStart - dragEnd;
+    const isLeftDrag = distance > minSwipeDistance;
+    const isRightDrag = distance < -minSwipeDistance;
+
+    if (isLeftDrag) {
+      goToNext();
+    } else if (isRightDrag) {
+      goToPrevious();
+    }
+    
+    // Reset
+    setDragStart(0);
+    setDragEnd(0);
+  };
+
+  const onMouseLeave = () => {
+    if (isDragging) {
+      setIsDragging(false);
+      setDragStart(0);
+      setDragEnd(0);
+    }
+  };
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -86,13 +136,21 @@ export const Carousel: React.FC<CarouselProps> = ({
 
   return (
     <div className={cn('fyw-relative fyw-w-full', className)}>
-      {/* Cards container - full width with touch support */}
+      {/* Cards container - full width with touch and mouse support */}
       <div 
         ref={containerRef}
         className="fyw-relative fyw-w-full fyw-overflow-hidden fyw-touch-pan-y"
+        style={{
+          cursor: isDragging ? 'grabbing' : 'grab',
+          userSelect: 'none',
+        }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseLeave}
       >
         {/* Card display with slide animation */}
         <div 
@@ -106,10 +164,13 @@ export const Carousel: React.FC<CarouselProps> = ({
               key={index}
               className={cn(
                 'fyw-w-full fyw-flex-shrink-0',
+                'fyw-flex fyw-justify-center', // Center content
                 cardClassName
               )}
             >
-              {child}
+              <div className="fyw-w-full md:fyw-max-w-[85%]">
+                {child}
+              </div>
             </div>
           ))}
         </div>

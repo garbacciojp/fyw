@@ -74,9 +74,10 @@ export const AppShell: React.FC<AppShellProps> = ({
               <img 
                 src={`${import.meta.env.PROD ? 'https://fyw-lrqe8.ondigitalocean.app/widget/v2' : ''}/images/prya-logo.png`}
                 alt="PRYA"
-                className="fyw-h-8 fyw-w-auto fyw-drop-shadow-lg"
+                className="fyw-h-6 fyw-w-auto fyw-drop-shadow-lg"
                 style={{
                   filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
+                  marginTop: '-0.5cm',
                 }}
               />
             </div>
