@@ -7,8 +7,9 @@
  */
 
 import { useState } from 'react';
-import type { UserDataPayload } from '@/types';
+import type { UserDataPayload, FlowType } from '@/types';
 import { cn } from '@/core';
+import { QUESTIONS } from '@/config';
 
 interface DebugPanelProps {
   formData: Partial<UserDataPayload>;
@@ -29,10 +30,37 @@ export const DebugPanel: React.FC<DebugPanelProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
-  // Build clean API payload (remove undefined/empty values)
+  // Filter payload based on current flow (matches OpenAI service logic)
+  const filterPayloadByFlow = (): Partial<UserDataPayload> => {
+    const flowType = formData.wordType as FlowType;
+    const filtered: Partial<UserDataPayload> = {};
+
+    // Get all form data keys from the questions config
+    QUESTIONS.forEach((question) => {
+      const shouldInclude = question.flowType === 'both' || question.flowType === flowType;
+      
+      if (shouldInclude) {
+        const key = question.formDataKey;
+        if (formData[key] !== undefined) {
+          (filtered as any)[key] = formData[key];
+        }
+      }
+    });
+
+    // Always include wordType
+    if (formData.wordType) {
+      filtered.wordType = formData.wordType;
+    }
+
+    return filtered;
+  };
+
+  // Build clean API payload (remove undefined/empty values from filtered data)
   const buildApiPayload = (): Partial<UserDataPayload> => {
+    const filtered = filterPayloadByFlow();
+    
     return JSON.parse(
-      JSON.stringify(formData, (_key, value) => {
+      JSON.stringify(filtered, (_key, value) => {
         if (
           value === null ||
           value === undefined ||
@@ -121,7 +149,7 @@ export const DebugPanel: React.FC<DebugPanelProps> = ({
           {/* API Payload Preview */}
           <div className="fyw-mb-4">
             <div className="fyw-text-slate-400 fyw-text-[10px] fyw-mb-2 fyw-uppercase fyw-tracking-wide">
-              API Payload (Sent to server):
+              API Payload (Filtered for '{formData.wordType}' flow):
             </div>
             <pre className="fyw-m-0 fyw-p-3 fyw-bg-green-500/10 fyw-border fyw-border-green-500/20 fyw-rounded fyw-text-green-400 fyw-text-[10px] fyw-leading-relaxed fyw-overflow-auto fyw-whitespace-pre-wrap">
               {JSON.stringify(cleanPayload, null, 2)}

@@ -32,17 +32,25 @@ export const QuestionRouter: React.FC<QuestionRouterProps> = ({
   // Get the component for this question type
   const QuestionComponent = getQuestionComponent(config.type);
 
+  // Resolve options: use getOptions if available, otherwise use static options
+  const resolvedOptions = config.getOptions && flowType 
+    ? config.getOptions(flowType)
+    : config.options;
+
+  // Prepare props with resolved options
+  const componentProps = {
+    value,
+    onChange,
+    onComplete,
+    error,
+    ...config, // Pass all config as props
+    options: resolvedOptions, // Override with resolved options
+    flowType, // Override config.flowType with actual flow
+  };
+
   // Render the component with config-specific props
-  return (
-    <QuestionComponent
-      value={value}
-      onChange={onChange}
-      onComplete={onComplete}
-      error={error}
-      {...config} // Pass all config as props
-      flowType={flowType} // Override config.flowType with actual flow
-    />
-  );
+  // Type assertion needed because different question types have different props
+  return <QuestionComponent {...(componentProps as any)} />;
 };
 
 

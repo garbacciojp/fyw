@@ -25,7 +25,7 @@ export const App: React.FC = () => {
   const [flowType, setFlowType] = useState<FlowType>('mine');
   const [suggestions, setSuggestions] = useState<JewelryNameSuggestion | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [showDebugPanel, setShowDebugPanel] = useState(import.meta.env.DEV); // Show in dev mode only
+  const [showDebugPanel, setShowDebugPanel] = useState(true); // Debug panel enabled
 
   // Initialize form data with storage callback
   const { formData, updateField, resetForm, isComplete } = useFormData({
@@ -176,14 +176,12 @@ export const App: React.FC = () => {
       showVideo={true}
       imageSrc={getCurrentImage()}
       debugPanel={
-        // Only render debug panel in development mode
-        !import.meta.env.PROD ? (
-          <DebugPanel
-            formData={formData}
-            isVisible={showDebugPanel}
-            onToggle={() => setShowDebugPanel(!showDebugPanel)}
-          />
-        ) : undefined
+        // Debug panel enabled for testing
+        <DebugPanel
+          formData={formData}
+          isVisible={showDebugPanel}
+          onToggle={() => setShowDebugPanel(!showDebugPanel)}
+        />
       }
     >
       {screen === APP_SCREENS.WELCOME ? (

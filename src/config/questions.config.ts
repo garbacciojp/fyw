@@ -190,12 +190,18 @@ export const QUESTIONS: QuestionConfig[] = [
     getTitle: () => 'What kind of meaning do you want the word to have?',
     getSubtitle: () => 'Choose one that best matches what you want.',
     buttonLayout: 'single-column' as const,
-    options: [
+    getOptions: (flow: FlowType) => flow === FLOW_TYPES.MINE ? [
       { value: 'Experience / concept', label: 'A word that inspires you' },
       { value: 'Mood / feeling', label: 'A word that expresses you' },
       { value: 'Mysterious / Unique', label: 'A word that is mysterious' },
       { value: 'Personal trait', label: "A word that's personal" },
       { value: 'Value / ideal', label: 'A word that reflects your values' },
+    ] : [
+      { value: 'Experience / concept', label: 'A word that inspires them' },
+      { value: 'Mood / feeling', label: 'A word that expresses them' },
+      { value: 'Mysterious / Unique', label: 'A word that is mysterious' },
+      { value: 'Personal trait', label: "A word that's personal" },
+      { value: 'Value / ideal', label: 'A word that reflects their values' },
     ],
   },
 

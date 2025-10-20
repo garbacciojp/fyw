@@ -50,6 +50,7 @@ export interface QuestionConfig {
   
   // Optional question-specific config
   options?: QuestionOption[];
+  getOptions?: (flow: FlowType) => QuestionOption[];
   maxSelections?: number;
   allowCustom?: boolean;
   placeholder?: string;

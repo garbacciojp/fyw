@@ -7,8 +7,8 @@
  * ⚠️ SECURITY: API key stays on server, widget only calls our backend
  */
 
-import type { UserDataPayload, JewelryNameSuggestion, WordSuggestion, OpenAIResponse } from '@/types';
-import { API_CONFIG } from '@/config';
+import type { UserDataPayload, JewelryNameSuggestion, WordSuggestion, OpenAIResponse, FlowType } from '@/types';
+import { API_CONFIG, QUESTIONS } from '@/config';
 
 /**
  * OpenAI Service Class
@@ -25,12 +25,41 @@ class OpenAIService {
   }
 
   /**
+   * Filter payload to only include fields relevant to the current flow
+   * This prevents sending mixed data when users switch between flows
+   */
+  private filterPayloadByFlow(userData: UserDataPayload): Partial<UserDataPayload> {
+    const flowType = userData.wordType as FlowType;
+    const filtered: Partial<UserDataPayload> = {};
+
+    // Get all form data keys from the questions config
+    QUESTIONS.forEach((question) => {
+      const shouldInclude = question.flowType === 'both' || question.flowType === flowType;
+      
+      if (shouldInclude) {
+        const key = question.formDataKey;
+        if (userData[key] !== undefined) {
+          // Type assertion is safe here as we're copying from validated UserDataPayload
+          (filtered as any)[key] = userData[key];
+        }
+      }
+    });
+
+    // Always include wordType as it's required
+    filtered.wordType = userData.wordType;
+
+    console.log(`📋 Filtered payload for '${flowType}' flow:`, Object.keys(filtered));
+
+    return filtered;
+  }
+
+  /**
    * Generate jewellery name suggestions
    * Calls our backend server which proxies to OpenAI (keeps API key secure)
    */
   async generateSuggestions(userData: UserDataPayload): Promise<JewelryNameSuggestion> {
-    // User data is already validated by Zod schemas and sanitized by form inputs
-    const sanitizedData = userData;
+    // Filter data to only include fields relevant to current flow
+    const sanitizedData = this.filterPayloadByFlow(userData);
 
     console.log('🚀 Generating suggestions for:', { wordType: sanitizedData.wordType });
 
