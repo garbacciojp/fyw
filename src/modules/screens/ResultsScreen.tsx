@@ -30,19 +30,20 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   const isMineFlow = flowType === 'mine';
   const [copied, setCopied] = useState(false);
   const [copiedWordIndex, setCopiedWordIndex] = useState<number | null>(null);
+  const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
 
-  // Copy words to clipboard with full details
+  // Copy current word to clipboard (only the word, nothing else)
   const handleCopyWords = async () => {
-    const formattedWords = words.map(word => {
-      return `${word.word}\n${word.pronunciation} • ${word.origin}\n\n${word.description}`;
-    }).join('\n\n\n');
+    // Only copy the word text from the current carousel position
+    const currentWord = words[currentCarouselIndex];
+    if (!currentWord) return;
     
     try {
-      await navigator.clipboard.writeText(formattedWords);
+      await navigator.clipboard.writeText(currentWord.word);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
     } catch (err) {
-      console.error('Failed to copy words:', err);
+      console.error('Failed to copy word:', err);
     }
   };
 
@@ -95,7 +96,10 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
 
       {/* Content (carousel) */}
       <div className="fyw-flex-1 fyw-flex fyw-items-center fyw-py-8 md:fyw-py-12">
-        <Carousel className="fyw-w-full fyw-px-6 md:fyw-px-8">
+        <Carousel 
+          className="fyw-w-full fyw-px-6 md:fyw-px-8"
+          onSlideChange={setCurrentCarouselIndex}
+        >
           {words.map((word, index) => (
             <div
               key={index}
@@ -152,7 +156,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
             VIEW JEWELLERY
           </Button>
           <Button onClick={handleCopyWords} variant="secondary" size="lg" fullWidth>
-            {copied ? 'COPIED!' : 'COPY WORDS'}
+            {copied ? 'COPIED!' : 'COPY WORD'}
           </Button>
         </div>
       </div>

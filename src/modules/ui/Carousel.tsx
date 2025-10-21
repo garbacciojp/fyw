@@ -19,6 +19,7 @@ interface CarouselProps {
   children: ReactNode[];
   className?: string;
   cardClassName?: string;
+  onSlideChange?: (index: number) => void;
 }
 
 /**
@@ -28,6 +29,7 @@ export const Carousel: React.FC<CarouselProps> = ({
   children,
   className,
   cardClassName,
+  onSlideChange,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
@@ -117,6 +119,11 @@ export const Carousel: React.FC<CarouselProps> = ({
       setDragEnd(0);
     }
   };
+
+  // Notify parent of slide changes
+  useEffect(() => {
+    onSlideChange?.(currentIndex);
+  }, [currentIndex, onSlideChange]);
 
   // Keyboard navigation
   useEffect(() => {
