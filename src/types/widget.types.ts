@@ -6,6 +6,13 @@
 import type { ReactNode } from 'react';
 
 /**
+ * Widget render mode
+ * - overlay: Full-screen modal (default, backwards compatible)
+ * - inline: Embedded in container without overlay
+ */
+export type WidgetMode = 'overlay' | 'inline';
+
+/**
  * Widget configuration options
  */
 export interface WidgetConfig {
@@ -14,6 +21,8 @@ export interface WidgetConfig {
   debug?: boolean;
   onClose?: () => void;
   autoOpen?: boolean;
+  mode?: WidgetMode;
+  container?: string | HTMLElement;
 }
 
 /**

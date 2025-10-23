@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Your Word - Inline Mode Test</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .page-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      background: white;
+      padding: 30px;
+      margin-bottom: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .page-header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      color: #111;
+    }
+
+    .page-header p {
+      font-size: 16px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .demo-section {
+      margin-bottom: 40px;
+    }
+
+    .demo-section h2 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #111;
+    }
+
+    .demo-section p {
+      margin-bottom: 15px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Widget Container */
+    .widget-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      overflow: hidden;
+      margin-bottom: 40px;
+    }
+
+    /* Different sizes for demo */
+    .widget-container.size-small {
+      height: 500px;
+    }
+
+    .widget-container.size-medium {
+      height: 700px;
+    }
+
+    .widget-container.size-large {
+      height: 900px;
+    }
+
+    .widget-container.size-full {
+      height: calc(100vh - 200px);
+      min-height: 700px;
+    }
+
+    .page-footer {
+      background: white;
+      padding: 30px;
+      margin-top: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .page-footer h3 {
+      margin-bottom: 10px;
+      color: #111;
+    }
+
+    .page-footer p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .demo-controls {
+      background: #f9f9f9;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 2px solid #e0e0e0;
+    }
+
+    .demo-controls h3 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #111;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 24px;
+      background: #000;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #333;
+    }
+
+    button.secondary {
+      background: #666;
+    }
+
+    button.secondary:hover {
+      background: #888;
+    }
+
+    .code-block {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .highlight {
+      color: #4ec9b0;
+    }
+
+    .comment {
+      color: #6a9955;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .page-header h1 {
+        font-size: 24px;
+      }
+
+      .widget-container {
+        height: 600px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <!-- Page Header -->
+    <header class="page-header">
+      <h1>🎨 Find Your Word - Inline Mode Demo</h1>
+      <p>
+        This page demonstrates the new <strong>inline embedding mode</strong> for the Find Your Word widget.
+        The widget is embedded directly in the page content without full-screen overlay.
+      </p>
+    </header>
+
+    <!-- Demo Controls -->
+    <div class="demo-controls">
+      <h3>📐 Test Different Container Sizes</h3>
+      <div class="button-group">
+        <button onclick="changeSize('small')">Small (500px)</button>
+        <button onclick="changeSize('medium')">Medium (700px)</button>
+        <button onclick="changeSize('large')">Large (900px)</button>
+        <button onclick="changeSize('full')">Full Height</button>
+        <button class="secondary" onclick="testOverlayMode()">Test Overlay Mode</button>
+      </div>
+    </div>
+
+    <!-- Demo Section 1: Basic Inline -->
+    <div class="demo-section">
+      <h2>Demo 1: Basic Inline Embed</h2>
+      <p>
+        The widget is embedded inline with a fixed height container. 
+        Notice how the page remains scrollable and the widget stays within its container.
+      </p>
+
+      <!-- Widget Container -->
+      <div id="inline-widget-1" class="widget-container size-large"></div>
+
+      <h3>Implementation:</h3>
+      <div class="code-block">
+<span class="comment">&lt;!-- HTML --&gt;</span>
+<span class="highlight">&lt;div</span> id=<span class="highlight">"inline-widget-1"</span> style=<span class="highlight">"height: 700px;"</span><span class="highlight">&gt;&lt;/div&gt;</span>
+
+<span class="comment">&lt;!-- Load Widget CSS and JS --&gt;</span>
+<span class="highlight">&lt;link</span> rel=<span class="highlight">"stylesheet"</span> href=<span class="highlight">"http://fyw-lrqe8.ondigitalocean.app/widget/v2/style.css"</span><span class="highlight">&gt;</span>
+<span class="highlight">&lt;script</span> src=<span class="highlight">"http://fyw-lrqe8.ondigitalocean.app/widget/v2/find-your-word-v2.iife.js"</span><span class="highlight">&gt;&lt;/script&gt;</span>
+
+<span class="comment">&lt;!-- Initialize Inline Mode --&gt;</span>
+<span class="highlight">&lt;script&gt;</span>
+  <span class="comment">// Create new instance in inline mode</span>
+  <span class="highlight">const</span> widget = <span class="highlight">new</span> FindYourWordWidget({
+    mode: <span class="highlight">'inline'</span>,
+    container: <span class="highlight">'#inline-widget-1'</span>,
+    debug: <span class="highlight">true</span>
+  });
+<span class="highlight">&lt;/script&gt;</span>
+      </div>
+    </div>
+
+    <!-- Demo Section 2: Shopify Integration -->
+    <div class="demo-section">
+      <h2>Demo 2: Shopify Collection Page Integration</h2>
+      <p>
+        Example of how the widget would appear on a Shopify collection page, 
+        embedded among other content like product listings or category descriptions.
+      </p>
+
+      <div class="code-block">
+<span class="comment">&lt;!-- Shopify Liquid Template Example --&gt;</span>
+<span class="highlight">&lt;div</span> class=<span class="highlight">"collection-content"</span><span class="highlight">&gt;</span>
+  
+  <span class="comment">&lt;!-- Collection Header --&gt;</span>
+  <span class="highlight">&lt;h1&gt;</span>{{ collection.title }}<span class="highlight">&lt;/h1&gt;</span>
+  <span class="highlight">&lt;p&gt;</span>{{ collection.description }}<span class="highlight">&lt;/p&gt;</span>
+  
+  <span class="comment">&lt;!-- Find Your Word Widget Inline --&gt;</span>
+  <span class="highlight">&lt;div</span> class=<span class="highlight">"find-your-word-section"</span> style=<span class="highlight">"margin: 40px 0; height: 700px;"</span><span class="highlight">&gt;</span>
+    <span class="highlight">&lt;div</span> id=<span class="highlight">"fyw-inline-widget"</span><span class="highlight">&gt;&lt;/div&gt;</span>
+  <span class="highlight">&lt;/div&gt;</span>
+  
+  <span class="comment">&lt;!-- Product Grid Below --&gt;</span>
+  <span class="highlight">&lt;div</span> class=<span class="highlight">"product-grid"</span><span class="highlight">&gt;</span>
+    {% for product in collection.products %}
+      <span class="comment">&lt;!-- Product cards --&gt;</span>
+    {% endfor %}
+  <span class="highlight">&lt;/div&gt;</span>
+  
+<span class="highlight">&lt;/div&gt;</span>
+
+<span class="comment">&lt;!-- Load Widget --&gt;</span>
+<span class="highlight">&lt;link</span> rel=<span class="highlight">"stylesheet"</span> href=<span class="highlight">"https://fyw-lrqe8.ondigitalocean.app/widget/v2/style.css"</span><span class="highlight">&gt;</span>
+<span class="highlight">&lt;script</span> src=<span class="highlight">"https://fyw-lrqe8.ondigitalocean.app/widget/v2/find-your-word-v2.iife.js"</span><span class="highlight">&gt;&lt;/script&gt;</span>
+<span class="highlight">&lt;script&gt;</span>
+  <span class="highlight">new</span> FindYourWordWidget({
+    mode: <span class="highlight">'inline'</span>,
+    container: <span class="highlight">'#fyw-inline-widget'</span>
+  });
+<span class="highlight">&lt;/script&gt;</span>
+      </div>
+    </div>
+
+    <!-- Page Footer -->
+    <footer class="page-footer">
+      <h3>✨ Inline vs Overlay Modes</h3>
+      <p>
+        <strong>Inline Mode:</strong> Widget embedded in page flow (like this demo)<br>
+        <strong>Overlay Mode:</strong> Full-screen modal (traditional behavior)
+      </p>
+      <p style="font-size: 14px; color: #999; margin-top: 20px;">
+        Find Your Word Widget v2.0 | Dual-Mode Support
+      </p>
+    </footer>
+  </div>
+
+  <!-- Load Widget (Development) -->
+  <link rel="stylesheet" href="http://localhost:5173/src/styles/index.css">
+  <script type="module" src="http://localhost:5173/src/widgets/findYourWord.tsx"></script>
+
+  <!-- Load Widget (Production - uncomment when deployed) -->
+  <!--
+  <link rel="stylesheet" href="https://fyw-lrqe8.ondigitalocean.app/widget/v2/style.css">
+  <script src="https://fyw-lrqe8.ondigitalocean.app/widget/v2/find-your-word-v2.iife.js"></script>
+  -->
+
+  <script>
+    // Wait for widget to load
+    function initWidget() {
+      if (typeof FindYourWordWidget === 'undefined') {
+        console.log('Waiting for widget to load...');
+        setTimeout(initWidget, 100);
+        return;
+      }
+
+      console.log('✅ Widget loaded, initializing inline mode...');
+
+      // Initialize inline widget
+      const inlineWidget = new FindYourWordWidget({
+        mode: 'inline',
+        container: '#inline-widget-1',
+        debug: true,
+        onClose: () => {
+          console.log('Widget close handler called (inline mode)');
+        }
+      });
+
+      // Store reference for controls
+      window.currentWidget = inlineWidget;
+      window.currentContainer = document.getElementById('inline-widget-1');
+    }
+
+    // Start initialization when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initWidget);
+    } else {
+      initWidget();
+    }
+
+    // Demo control functions
+    function changeSize(size) {
+      const container = window.currentContainer;
+      if (!container) return;
+
+      // Remove all size classes
+      container.classList.remove('size-small', 'size-medium', 'size-large', 'size-full');
+      
+      // Add new size class
+      container.classList.add(`size-${size}`);
+      
+      console.log(`✅ Container size changed to: ${size}`);
+    }
+
+    function testOverlayMode() {
+      // Create a temporary overlay widget instance
+      const overlayWidget = new FindYourWordWidget({
+        mode: 'overlay',
+        debug: true
+      });
+
+      // Open it
+      overlayWidget.open();
+
+      console.log('✅ Overlay mode test opened');
+    }
+  </script>
+</body>
+</html>
+

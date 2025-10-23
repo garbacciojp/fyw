@@ -9,7 +9,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { AppScreen, FlowType, PartialUserFormData, JewelryNameSuggestion, UserDataPayload } from '@/types';
+import type { AppScreen, FlowType, PartialUserFormData, JewelryNameSuggestion, UserDataPayload, WidgetMode } from '@/types';
 import { useQuestionFlow, useFormData, storage } from '@/core';
 import { openaiService } from '@/core/services';
 import { AppShell, AppHeader, AppContent } from './layout';
@@ -18,9 +18,17 @@ import { DebugPanel } from './debug';
 import { APP_SCREENS, getQuestionImage, getLoadingImage, getResultsImage, DEFAULT_IMAGE, UI_CONFIG } from '@/config';
 
 /**
+ * App component props
+ */
+interface AppProps {
+  mode?: WidgetMode;
+  onClose?: () => void;
+}
+
+/**
  * Main application component
  */
-export const App: React.FC = () => {
+export const App: React.FC<AppProps> = ({ mode = 'overlay', onClose }) => {
   const [screen, setScreen] = useState<AppScreen>(APP_SCREENS.WELCOME as AppScreen);
   const [flowType, setFlowType] = useState<FlowType>('mine');
   const [suggestions, setSuggestions] = useState<JewelryNameSuggestion | null>(null);
@@ -85,15 +93,21 @@ export const App: React.FC = () => {
     // Keep screen on QUESTIONS and keep current flowType
   }, [resetForm, questionFlow]);
 
-  // Handle close - return to welcome screen
+  // Handle close - return to welcome screen (overlay) or call external close handler (inline)
   const handleClose = useCallback(() => {
-    resetForm();
-    storage.clearFormData();
-    setScreen(APP_SCREENS.WELCOME as AppScreen);
-    setFlowType('mine');
-    setSuggestions(null);
-    setError(null);
-  }, [resetForm]);
+    if (mode === 'inline' && onClose) {
+      // Inline mode: call external close handler if provided
+      onClose();
+    } else {
+      // Overlay mode: reset to welcome screen (default behavior)
+      resetForm();
+      storage.clearFormData();
+      setScreen(APP_SCREENS.WELCOME as AppScreen);
+      setFlowType('mine');
+      setSuggestions(null);
+      setError(null);
+    }
+  }, [mode, onClose, resetForm]);
 
   // Get current image based on screen and question
   const getCurrentImage = (): string => {
@@ -173,6 +187,7 @@ export const App: React.FC = () => {
   // Always use AppShell for consistent two-column desktop layout
   return (
     <AppShell 
+      mode={mode}
       showVideo={true}
       imageSrc={getCurrentImage()}
       debugPanel={
@@ -209,8 +224,11 @@ export const App: React.FC = () => {
               />
             </div>
             
-            {/* Close button inside scrollable area */}
-            <AppHeader onClose={handleClose} />
+            {/* Close button inside scrollable area (only show in overlay mode) */}
+            <AppHeader 
+              onClose={handleClose} 
+              showCloseButton={mode === 'overlay'} 
+            />
             
             {screen === APP_SCREENS.QUESTIONS || screen === APP_SCREENS.LOADING ? (
               // QuestionScreen and LoadingScreen handle their own layout

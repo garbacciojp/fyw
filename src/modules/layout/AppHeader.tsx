@@ -3,7 +3,7 @@
  * Header section with close button
  * 
  * Single Responsibility: Render header area
- * Props: 3 (under the 7-prop limit)
+ * Props: 4 (under the 7-prop limit)
  */
 
 import type { ReactNode } from 'react';
@@ -13,12 +13,18 @@ interface AppHeaderProps {
   onClose?: () => void;
   children?: ReactNode;
   className?: string;
+  showCloseButton?: boolean;
 }
 
 /**
  * Header component with close button
  */
-export const AppHeader: React.FC<AppHeaderProps> = ({ onClose, children, className }) => {
+export const AppHeader: React.FC<AppHeaderProps> = ({ 
+  onClose, 
+  children, 
+  className,
+  showCloseButton = true 
+}) => {
   return (
     <header
       className={cn(
@@ -28,8 +34,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onClose, children, classNa
         className
       )}
     >
-      {/* Close button */}
-      {onClose && (
+      {/* Close button (only show if enabled and handler provided) */}
+      {showCloseButton && onClose && (
         <button
           onClick={onClose}
           className={cn(

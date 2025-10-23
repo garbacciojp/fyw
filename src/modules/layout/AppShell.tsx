@@ -3,14 +3,19 @@
  * Main container for the widget
  * 
  * Single Responsibility: Provide main layout structure
- * Props: 5 (under the 7-prop limit - includes debug panel support)
+ * Props: 6 (under the 7-prop limit - includes mode and debug panel support)
  * 
  * RESPONSIVE BEHAVIOR:
  * Mobile (<768px): Vertical layout with image preview window on top
  * Desktop (≥768px): Horizontal two-column layout (image left, content right)
+ * 
+ * RENDER MODES:
+ * - overlay: Full-screen fixed positioning (default)
+ * - inline: Relative positioning within container
  */
 
 import type { ReactNode } from 'react';
+import type { WidgetMode } from '@/types';
 import { cn } from '@/core';
 import { DEFAULT_IMAGE } from '@/config/images.config';
 
@@ -20,6 +25,7 @@ interface AppShellProps {
   imageSrc?: string;
   debugPanel?: ReactNode;
   className?: string;
+  mode?: WidgetMode;
 }
 
 /**
@@ -32,16 +38,28 @@ export const AppShell: React.FC<AppShellProps> = ({
   imageSrc = DEFAULT_IMAGE,
   debugPanel,
   className,
+  mode = 'overlay',
 }) => {
+  // Mode-specific class names
+  const modeClasses = mode === 'overlay'
+    ? 'fyw-fixed fyw-top-0 fyw-left-0 fyw-right-0 fyw-bottom-0 fyw-z-[999999]'
+    : 'fyw-relative fyw-w-full fyw-h-full';
+
+  // Mode-specific styles
+  const modeStyles = mode === 'overlay'
+    ? { maxHeight: '100vh', height: '100vh' }
+    : { width: '100%', height: '100%' };
+
   return (
     <div
       className={cn(
         'fyw-widget',
-        'fyw-fixed fyw-top-0 fyw-left-0 fyw-right-0 fyw-bottom-0 fyw-z-[999999]',
+        `fyw-mode-${mode}`,
+        modeClasses,
         'fyw-overflow-hidden fyw-bg-fyw-black',
         className
       )}
-      style={{ maxHeight: '100vh', height: '100vh' }}
+      style={modeStyles}
     >
       {/* 
         RESPONSIVE LAYOUT:
